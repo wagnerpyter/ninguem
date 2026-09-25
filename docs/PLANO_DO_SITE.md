@@ -32,6 +32,7 @@ A marca principal deve ser **Ninguém**, não o nome pessoal do criador: isso d�
 5. Disponibilidade atual do curta para exibição/embeds, legendas e autorização de exibição no site.
 6. Titularidade e autorização para reproduzir desenhos, páginas de HQ, fotogramas, trilha, cartazes, logotipos e fotografias.
 7. Explicação e escopo do conceito experimental **“personagem situado”**: o que significa “ensinar” o personagem a participar da criação de um filme, quais ferramentas e materiais seriam usados, como ficam autoria/direitos e se a ideia pode ser divulgada publicamente. Tratar como pesquisa em andamento, não como funcionalidade ou promessa do site.
+8. A imagem enviada pelo autor, criada com ChatGPT como conceito de Ninguém encontrando seu criador em um bar, pode aparecer apenas com legenda de **experimento visual não canônico** e crédito aprovado. A referência a Constantine e Alan Moore descreve a inspiração informada pelo autor; não sugerir vínculo, endosso ou colaboração desses artistas.
 
 ## 3. Objetivos e públicos
 
