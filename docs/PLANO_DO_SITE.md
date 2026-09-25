@@ -1,8 +1,8 @@
 # Plano do site — Ninguém, o Herói do Povo
 
-**Projeto:** presença oficial digital de *Ninguém, o Herói do Povo*  
-**Personagem/criação:** Augusto Mattos (grafia a confirmar com o criador; algumas fontes usam “Augusto Matos”)  
-**Origem e ambientação:** Salvador, Bahia  
+**Projeto:** presença oficial digital de *Ninguém, o Herói do Povo*
+**Personagem/criação:** Augusto Matos (fontes consultadas também registram “Augusto Mattos”; alinhar a grafia oficial nos créditos)
+**Origem e ambientação:** Salvador, Bahia
 **Status deste documento:** plano inicial, baseado em fontes públicas consultadas em 25/09/2026. Não é ainda uma autorização de uso de imagens, vídeos ou marcas.
 
 ## 1. Resumo executivo
@@ -10,6 +10,10 @@
 Criar um site oficial, responsivo e leve que apresente *Ninguém* a novos públicos, organize o universo e o histórico da obra, dê destaque ao curta de animação e aos quadrinhos, e ofereça um canal claro para imprensa, festivais, parceiros e leitores.
 
 A proposta central de comunicação é: **um herói popular de Salvador, criado por um artista baiano, que é gari durante o dia e enfrenta o crime no tempo livre — e que, como indica a apresentação pública da série, também “atrapalha”.** O humor e a identidade local devem estar no centro da experiência, sem transformar Salvador em mero cenário turístico.
+
+### Marca e domínio
+
+A marca principal deve ser **Ninguém**, não o nome pessoal do criador: isso dá destaque à obra e permite que o site funcione como portal do personagem. A preferência compartilhada é pelo endereço `ninguem.ia.br`, em vez de `augustomattos.com.br`. Minha recomendação é manter **Ninguém** como escolha de marca e verificar primeiro se `ninguem.com.br` está disponível, por ser mais neutro e fácil de explicar. Se a decisão ficar entre as duas opções mencionadas, `ninguem.ia.br` é a mais alinhada à marca; porém, `.ia.br` é a categoria brasileira voltada a Inteligência Artificial e pode levar o público a supor que o projeto é de IA. Validar se essa associação combina com a estratégia e consultar disponibilidade diretamente no Registro.br antes de decidir. **Este plano não registra nem reserva domínio.**
 
 ## 2. Base de pesquisa e fatos para orientar o conteúdo
 
@@ -21,12 +25,13 @@ A proposta central de comunicação é: **um herói popular de Salvador, criado 
 
 ### Pontos que precisam de validação antes da publicação
 
-1. Grafia oficial do nome do criador: **Augusto Mattos** ou **Augusto Matos** (as páginas consultadas divergem; usar a grafia aprovada pelo próprio autor).
+1. Grafia e forma de crédito oficial do criador: **Augusto Matos** ou **Augusto Mattos** (fontes divergem; uniformizar conforme aprovação do autor).
 2. Cronologia: criação do personagem em 1991, produção do curta em 2010 e data/condições de publicação online.
 3. Sinopse oficial, elenco/personagens, títulos e ordem das histórias em quadrinhos, além da existência e status atual de projeto de série.
 4. Créditos completos, minibiografia e links oficiais do criador e da equipe.
 5. Disponibilidade atual do curta para exibição/embeds, legendas e autorização de exibição no site.
 6. Titularidade e autorização para reproduzir desenhos, páginas de HQ, fotogramas, trilha, cartazes, logotipos e fotografias.
+7. Explicação e escopo do conceito experimental **“personagem situado”**: o que significa “ensinar” o personagem a participar da criação de um filme, quais ferramentas e materiais seriam usados, como ficam autoria/direitos e se a ideia pode ser divulgada publicamente. Tratar como pesquisa em andamento, não como funcionalidade ou promessa do site.
 
 ## 3. Objetivos e públicos
 
@@ -59,6 +64,8 @@ Recomendação inicial: **site institucional de uma página (one-page) com ânco
 8. **Novidades / imprensa** — atualizações oficiais, pacote de imprensa para download, contato e links verificados das redes.
 9. **Rodapé** — créditos, aviso de direitos autorais, privacidade (se houver coleta de dados) e acessibilidade.
 
+Uma área ou publicação sobre **“personagem situado”** pode ser considerada numa fase futura, depois de o criador explicar e aprovar a ideia e o processo. Não incluir no lançamento do site como produto, tecnologia ou capacidade já disponível.
+
 ## 5. Direção visual e tom
 
 - **Identidade:** linguagem de quadrinhos e animação, com energia urbana, traço expressivo e composição editorial; deixar as artes originais conduzirem a identidade visual.
@@ -88,6 +95,8 @@ O repositório atual contém somente um `README.md`, portanto a recomendação �
 - `LICENSE` — selecionar somente após definir licenças do código; isso não concede direitos sobre as obras do personagem.
 
 A escolha por HTML/CSS/JS simples mantém o carregamento rápido e a manutenção acessível. Um gerador estático pode ser considerado mais adiante, se o volume de notícias e histórias justificar. Configurar GitHub Pages depois de o conteúdo e os direitos de publicação estarem confirmados.
+
+Domínio e hospedagem são decisões separadas: primeiro verificar a disponibilidade e confirmar quem será o titular do endereço; depois configurar o domínio no provedor escolhido e apontá-lo para o GitHub Pages. Não publicar dados pessoais de registro no repositório.
 
 ## 8. Etapas de execução
 
@@ -128,6 +137,8 @@ A escolha por HTML/CSS/JS simples mantém o carregamento rápido e a manutençã
 - TVE Bahia / Soterópolis, **“Soterópolis - Super Herói”** (vídeo; conferir diretamente a reportagem antes de usar a data de 1991): https://www.youtube.com/watch?v=QshUW_-Vmwg
 - Página pública **“Ninguém - O herói do Povo”**: https://www.facebook.com/ninguemheroibaiano/
 - Perfil indicado em resultados públicos como **Augusto Mattos, animador**: https://www.instagram.com/augustomattos_animator/
+- Registro.br, **categorias de domínios .br** (lista `.ia.br` como categoria de Inteligência Artificial): https://registro.br/dominio/categorias/
+- NIC.br, **“Brasil inaugura ia.br e mais três categorias de domínio”** (informa que pessoas físicas ou jurídicas podem registrar as novas categorias): https://nic.br/noticia/na-midia/brasil-inaugura-ia-br-e-mais-tres-categorias-de-dominio/
 - Repositório do projeto: https://github.com/wagnerpyter/ninguem
 
 ---
