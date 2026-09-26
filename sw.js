@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ninguem-site-v4';
+const CACHE_NAME = 'ninguem-site-v5';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -9,8 +9,8 @@ const CORE_ASSETS = [
   './assets/icon.svg',
   './assets/ninguem-referencia.jpg',
   './assets/quadro-referencia.webp',
-  './assets/mockup-camiseta.jpg',
-  './assets/mockup-ecobag.jpg'
+  './assets/mockup-camiseta.webp',
+  './assets/mockup-ecobag.webp'
 ];
 
 self.addEventListener('install', event => {
