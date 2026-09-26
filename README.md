@@ -24,6 +24,7 @@ O domínio próprio, se escolhido, é uma configuração separada: primeiro conf
 - Controle de alto contraste, preferência de movimento reduzido e estado de conexão.
 - PWA instalável em navegadores compatíveis, com manifesto e ícone vetorial local.
 - Cache offline da página, estilos, scripts e imagens locais após a primeira visita conectada.
+- Vitrine demonstrativa em `loja.html`, com mockups neutros de camiseta e ecobag, sem carrinho, checkout, preços definidos ou venda ativa.
 - Conteúdo essencial local, sem framework, dependência de API ou fonte remota obrigatória.
 
 O botão de instalação aparece apenas quando o navegador oferece essa opção. A primeira visita requer conexão. Links para vídeo, redes sociais e matéria externa também requerem conexão e não são guardados no cache.
@@ -35,10 +36,11 @@ As duas imagens enviadas junto à conversa foram incluídas no protótipo; a cen
 ## Estrutura
 
 - `index.html` — conteúdo e estrutura semântica.
+- `loja.html` — template visual demonstrativo para uma futura loja de produtos sob demanda; ainda não aceita pedidos.
 - `styles.css` — visual, responsividade e alto contraste.
 - `app.js` — menu, preferência de contraste, instalação e conexão.
 - `sw.js` — cache offline após primeira visita.
 - `manifest.webmanifest` — metadados instaláveis.
-- `assets/` — imagens de referência fornecidas pelo usuário, artes vetoriais próprias do protótipo e ícone.
+- `assets/` — imagens de referência fornecidas pelo usuário, mockups neutros gerados para o template, artes vetoriais do protótipo e ícone.
 
 Fontes de pesquisa e escopo editorial constam em [`docs/PLANO_DO_SITE.md`](docs/PLANO_DO_SITE.md). O protótipo é conceitual; identidade e conteúdo final dependem da aprovação do criador.

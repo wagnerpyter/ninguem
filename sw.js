@@ -1,13 +1,16 @@
-const CACHE_NAME = 'ninguem-site-v3';
+const CACHE_NAME = 'ninguem-site-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
+  './loja.html',
   './styles.css',
   './app.js',
   './manifest.webmanifest',
   './assets/icon.svg',
   './assets/ninguem-referencia.jpg',
-  './assets/quadro-referencia.webp'
+  './assets/quadro-referencia.webp',
+  './assets/mockup-camiseta.jpg',
+  './assets/mockup-ecobag.jpg'
 ];
 
 self.addEventListener('install', event => {
@@ -31,15 +34,15 @@ self.addEventListener('fetch', event => {
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cachedPage = await cache.match(request);
+      if (cachedPage) return cachedPage;
       try {
         const response = await fetch(request);
-        if (response.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          await cache.put('./index.html', response.clone());
-        }
+        if (response.ok) await cache.put(request, response.clone());
         return response;
       } catch (_) {
-        return (await caches.match('./index.html')) || Response.error();
+        return (await cache.match('./index.html')) || Response.error();
       }
     })());
     return;
