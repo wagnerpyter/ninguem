@@ -1,9 +1,9 @@
 # Plano do site — Ninguém, o Herói do Povo
 
 **Projeto:** presença oficial digital de *Ninguém, o Herói do Povo*
-**Personagem/criação:** Augusto Matos (fontes consultadas também registram “Augusto Mattos”; alinhar a grafia oficial nos créditos)
+**Personagem/criação:** Augusto Matos Pereira (créditos da obra: Augusto Matos, conforme correção direta do criador)
 **Origem e ambientação:** Salvador, Bahia
-**Status deste documento:** plano inicial, baseado em fontes públicas consultadas em 25/09/2026. Não é ainda uma autorização de uso de imagens, vídeos ou marcas.
+**Status deste documento:** plano atualizado com fontes públicas consultadas em 25/09/2026 e correção direta do criador recebida em 26/09/2026. Isso não equivale a autorização de uso de imagens, vídeos ou marcas.
 
 ## 1. Resumo executivo
 
@@ -17,22 +17,25 @@ A marca principal deve ser **Ninguém**, não o nome pessoal do criador: isso d�
 
 ## 2. Base de pesquisa e fatos para orientar o conteúdo
 
-- O artigo do Mirá sobre *Ninguém: O Herói do Povo – A Origem* apresenta o curta como adaptação de uma história em quadrinhos de Augusto Mattos e descreve o protagonista como um super-herói de Salvador que trabalha como gari de dia e combate o crime no tempo livre.
-- O mesmo artigo informa **Salvador / 2010**, animação em português do Brasil, e credita criação e direção a Augusto Mattos. A ficha técnica inclui Luciana Barreto (produção e arte), Luiz Batalha (animação), Marcelo Vitz (assistência/revisão de roteiro), Aires Machado e Frederico Fernandez (ilustração de cenários), Adriano Luz (edição e direção musical), Marcos Galdino (trilha), além de vozes creditadas a Augusto Mattos, AC Costa, Adriano Big e Fernando Santana.
+- **Correção direta do autor (Augusto Matos Pereira, mensagem/transcrição de 26/09/2026):** a obra *Ninguém*, patrocinada pela Olhar Filmes, é de 2007 e teve direção de Adriano Dias e Augusto Matos, nesta ordem. Depois veio a animação *Ninguém: A Origem*, produzida em 2010 e lançada em 2011. O projeto foi contemplado em primeiro lugar, com a maior pontuação, no “Edital IRDEB para Projeto de Bíblia de Série de Animação Interprograma de TV 2010”. Usar esta distinção entre produção e lançamento e manter a grafia de créditos indicada pelo autor.
+- Como contrapartida social, Augusto relata ter ministrado uma oficina de cartoon com *Ninguém — O Herói do Povo* no Cine Clube Alagados e doado DVDs. Ele recorda uma matéria de jornal em que um jovem estudante de Alagados contou que as sessões do cineclube e o encontro com o herói contribuíram para sua escolha do caminho cinematográfico. Segundo Augusto, o nome do estudante pode ser Gabriel Dias, mas isso ainda precisa ser conferido no vídeo/matéria prometidos; não publicar nome nem fala entre aspas antes da checagem.
+- O artigo público do Mirá descreve *Ninguém: O Herói do Povo – A Origem* como adaptação de uma história em quadrinhos, registra **Salvador / 2010** e publica uma ficha técnica com créditos da equipe. O ano de 2010 se refere, conforme correção do autor, à produção; o autor informa lançamento em 2011. Revalidar créditos individuais com o material documental antes de republicar a ficha completa.
 - A página pública de Facebook “Ninguém - O herói do Povo” descreve uma série de aventuras de um herói baiano que luta contra o crime e “atrapalha”, e classifica a página como personagem fictício.
 - Uma reportagem do programa **Soterópolis**, da TVE, sobre o super-herói, é apresentada nos resultados públicos como dizendo que o personagem foi criado em **1991** pelo desenhista e animador Augusto Mattos. Como a página de vídeo não disponibilizou transcrição verificável nesta pesquisa, usar essa data no site somente depois de confirmação do criador ou revisão direta da reportagem.
 - Há presença pública associada ao criador sob o nome/perfil `augustomattos_animator`; confirmar com ele qual nome profissional, bio e links devem aparecer no site.
 
 ### Pontos que precisam de validação antes da publicação
 
-1. Grafia e forma de crédito oficial do criador: **Augusto Matos** ou **Augusto Mattos** (fontes divergem; uniformizar conforme aprovação do autor).
-2. Cronologia: criação do personagem em 1991, produção do curta em 2010 e data/condições de publicação online.
-3. Sinopse oficial, elenco/personagens, títulos e ordem das histórias em quadrinhos, além da existência e status atual de projeto de série.
-4. Créditos completos, minibiografia e links oficiais do criador e da equipe.
-5. Disponibilidade atual do curta para exibição/embeds, legendas e autorização de exibição no site.
-6. Titularidade e autorização para reproduzir desenhos, páginas de HQ, fotogramas, trilha, cartazes, logotipos e fotografias.
-7. Explicação e escopo do conceito experimental **“personagem situado”**: o que significa “ensinar” o personagem a participar da criação de um filme, quais ferramentas e materiais seriam usados, como ficam autoria/direitos e se a ideia pode ser divulgada publicamente. Tratar como pesquisa em andamento, não como funcionalidade ou promessa do site.
-8. A imagem enviada pelo autor, criada com ChatGPT como conceito de Ninguém encontrando seu criador em um bar, pode aparecer apenas com legenda de **experimento visual não canônico** e crédito aprovado. A referência a Constantine e Alan Moore descreve a inspiração informada pelo autor; não sugerir vínculo, endosso ou colaboração desses artistas.
+1. A grafia de crédito informada pelo criador é **Augusto Matos Pereira / Augusto Matos**. Usar esta forma; preservar a variante “Augusto Mattos” somente ao citar fontes que a grafam assim.
+2. Incorporar a cronologia informada pelo autor: *Ninguém* (2007), patrocinado pela Olhar Filmes, direção de Adriano Dias e Augusto Matos; animação *Ninguém: A Origem* produzida em 2010 e lançada em 2011; seleção em primeiro lugar no edital IRDEB com a maior pontuação. Conferir o título oficial completo do edital, se o material futuro trouxer grafia/formulação diferente.
+3. A data de criação do personagem **1991**, que aparece em reportagem pública, não foi alterada por esta correção e ainda pede confirmação direta ou revisão do vídeo.
+4. Receber e conferir o vídeo/matéria sobre o Cine Clube Alagados, a oficina, a doação de DVDs e o depoimento do estudante; confirmar o nome (possivelmente Gabriel Dias) e palavras exatas antes de identificar, citar ou publicar a fala.
+5. Sinopse oficial, elenco/personagens, títulos e ordem das histórias em quadrinhos, além da existência e do status atual de projeto de série.
+6. Créditos completos da produção, minibiografia aprovada e links oficiais do criador e da equipe.
+7. Disponibilidade atual do curta para exibição/embeds, legendas e autorização de exibição no site.
+8. Titularidade e autorização para reproduzir desenhos, páginas de HQ, fotogramas, trilha, cartazes, logotipos e fotografias.
+9. Explicação e escopo do conceito experimental **“personagem situado”**: o que significa “ensinar” o personagem a participar da criação de um filme, quais ferramentas e materiais seriam usados, como ficam autoria/direitos e se a ideia pode ser divulgada publicamente. Tratar como pesquisa em andamento, não como funcionalidade ou promessa do site.
+10. A imagem enviada pelo autor, criada com ChatGPT como conceito de Ninguém encontrando seu criador em um bar, pode aparecer apenas com legenda de **experimento visual não canônico** e crédito aprovado. A referência a Constantine e Alan Moore descreve a inspiração informada pelo autor; não sugerir vínculo, endosso ou colaboração desses artistas.
 
 ## 3. Objetivos e públicos
 
@@ -57,7 +60,7 @@ Recomendação inicial: **site institucional de uma página (one-page) com ânco
 
 1. **Início / capa** — ilustração principal autorizada, título e assinatura curta (“O herói do povo de Salvador”), breve apresentação e chamadas “Conheça Ninguém” e “Assista ao curta” (esta última só após confirmar que o vídeo e a incorporação estão disponíveis).
 2. **Quem é Ninguém** — apresentação simples do alter ego, rotina de gari e atuação como herói; tom bem-humorado, sem acrescentar elementos de enredo não confirmados.
-3. **Origem** — história da criação em quadrinhos, contexto de Salvador e linha do tempo validada (ex.: personagem, HQ, curta de 2010).
+3. **Origem** — história e cronologia (2007, produção da animação em 2010, lançamento em 2011), resultado do edital e contrapartida no Cine Clube Alagados, com as informações atribuídas ao criador e materiais documentais conferidos antes de citação literal.
 4. **Assista** — player incorporado ou link oficial para *A Origem*, sinopse, ano, duração confirmada, idioma, créditos essenciais e opção de legendas quando disponível.
 5. **Quadrinhos e universo** — capas/páginas autorizadas, fichas de histórias e personagens; lançar apenas com material e descrições fornecidos/aprovados pelo criador.
 6. **Galeria** — desenhos de produção, cenários e imagens do curta, cada item com crédito e texto alternativo.
@@ -102,7 +105,9 @@ Domínio e hospedagem são decisões separadas: primeiro verificar a disponibili
 ## 8. Etapas de execução
 
 ### Fase 1 — validação editorial e direitos
-- Confirmar grafia, cronologia, sinopse, créditos e links com Augusto Mattos.
+- Aplicar a correção direta recebida de Augusto Matos Pereira sobre grafia, cronologia, patrocínio, direção, edital e ação no Cine Clube Alagados.
+- Conferir a transcrição com o vídeo e a matéria prometidos, sobretudo o nome e a fala do estudante; manter atribuição ao autor até essa checagem.
+- Confirmar a data de criação (1991), sinopse, créditos completos e links oficiais.
 - Solicitar artes e vídeo em resolução adequada e permissões de uso.
 - Definir contato oficial e quais CTAs o site pode oferecer.
 
@@ -133,6 +138,8 @@ Domínio e hospedagem são decisões separadas: primeiro verificar a disponibili
 - O repositório permite atualizar o conteúdo e republicar sem infraestrutura de servidor.
 
 ## 10. Fontes públicas consultadas
+
+- Augusto Matos Pereira, mensagem de voz transcrita e correção editorial enviada em 26/09/2026 (fonte direta do criador para a cronologia de 2007/2010/2011, o edital e a contrapartida no Cine Clube Alagados). O vídeo e a matéria de jornal mencionados ainda serão enviados para conferência documental.
 
 - Mirá, **“Ninguém: O Herói do Povo – A Origem (2010)”**: https://miraeba.com.br/2023/02/01/ninguem-o-heroi-do-povo-a-origem/
 - TVE Bahia / Soterópolis, **“Soterópolis - Super Herói”** (vídeo; conferir diretamente a reportagem antes de usar a data de 1991): https://www.youtube.com/watch?v=QshUW_-Vmwg

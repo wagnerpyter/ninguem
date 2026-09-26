@@ -31,7 +31,7 @@ O botão de instalação aparece apenas quando o navegador oferece essa opção.
 
 ## Conteúdo e direitos
 
-As duas imagens enviadas junto à conversa foram incluídas no protótipo; a cena de HQ foi convertida para WebP sem cortar a composição. A segunda imagem é um conceito experimental criado pelo autor com ChatGPT: Ninguém encontra o criador em um bar, como cena metalinguística com referência a Constantine e Alan Moore. O site não a apresenta como cena canônica nem como colaboração dos artistas citados. Os créditos e a autorização para uso e publicação das imagens devem ser confirmados com o criador. Os textos biográficos também são provisórios. Antes do lançamento oficial, revisar grafia, biografia, sinopse, créditos e autorização para usar desenho, fotogramas, logotipo e HQ.
+As imagens enviadas junto à conversa foram incluídas no protótipo; a cena de HQ foi convertida para WebP sem cortar a composição. A imagem de Ninguém encontrando o criador em um bar é um conceito experimental feito pelo autor com ChatGPT, não uma cena canônica nem uma colaboração de Constantine ou Alan Moore. A cronologia e os créditos da criação foram atualizados conforme correção direta de Augusto Matos Pereira recebida em 26/09/2026: obra patrocinada pela Olhar Filmes em 2007, direção de Adriano Dias e Augusto Matos; animação produzida em 2010, lançada em 2011 e contemplada em primeiro lugar no edital IRDEB de 2010. A oficina, doação de DVDs e lembrança de um depoimento no Cine Clube Alagados também foram atribuídas ao autor; o vídeo e a matéria prometidos ainda precisam ser conferidos, inclusive para confirmar o nome do estudante. Antes do lançamento oficial, revisar os materiais, créditos e autorizações para usar desenho, fotogramas, logotipo e HQ.
 
 ## Estrutura
 
