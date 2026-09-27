@@ -25,6 +25,7 @@ O domínio próprio, se escolhido, é uma configuração separada: primeiro conf
 - PWA instalável em navegadores compatíveis, com manifesto e ícone vetorial local.
 - Cache offline da página, estilos, scripts e imagens locais após a primeira visita conectada.
 - Vitrine demonstrativa em `loja.html`, com mockups neutros de camiseta e ecobag, sem carrinho, checkout, preços definidos ou venda ativa.
+- Página conceitual em `festivalumminuto.html`, com apresentação do roteiro em desenvolvimento e storyboard fornecido para o projeto audiovisual.
 - Conteúdo essencial local, sem framework, dependência de API ou fonte remota obrigatória.
 
 O botão de instalação aparece apenas quando o navegador oferece essa opção. A primeira visita requer conexão. Links para vídeo, redes sociais e matéria externa também requerem conexão e não são guardados no cache.
@@ -37,6 +38,7 @@ As imagens enviadas junto à conversa foram incluídas no protótipo; a cena de 
 
 - `index.html` — conteúdo e estrutura semântica.
 - `loja.html` — template visual demonstrativo para uma futura loja de produtos sob demanda; ainda não aceita pedidos.
+- `festivalumminuto.html` — página conceitual para o projeto audiovisual “Ninguém: da página ao mundo”, em desenvolvimento.
 - `styles.css` — visual, responsividade e alto contraste.
 - `app.js` — menu, preferência de contraste, instalação e conexão.
 - `sw.js` — cache offline após primeira visita.

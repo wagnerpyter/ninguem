@@ -1,14 +1,16 @@
-const CACHE_NAME = 'ninguem-site-v6';
+const CACHE_NAME = 'ninguem-site-v7';
 const CORE_ASSETS = [
   './',
   './index.html',
   './loja.html',
+  './festivalumminuto.html',
   './styles.css',
   './app.js',
   './manifest.webmanifest',
   './assets/icon.svg',
   './assets/ninguem-referencia.jpg',
   './assets/quadro-referencia.webp',
+  './assets/festival-um-minuto-storyboard.png',
   './assets/mockup-camiseta.webp',
   './assets/mockup-ecobag.webp'
 ];
