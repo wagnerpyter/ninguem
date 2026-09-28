@@ -1,1 +1,297 @@
-null
+{
+  "project": {
+    "title": "Ninguém, o herói do povo",
+    "subtitle": "Argumento para animação curta-metragem ou série",
+    "author": "Augusto Mattos",
+    "source": "ArgumentoNinguém2025v3.pdf",
+    "source_updated_at": "2026-09-27",
+    "language": "pt-BR",
+    "format_options": [
+      { "type": "short_film", "duration_minutes": 20 },
+      { "type": "series", "episodes": 6, "episode_duration_seconds": 200 }
+    ],
+    "setting": "Soterópolis",
+    "genre": ["animação", "ação", "comédia", "super-herói", "crítica social"],
+    "animation": {
+      "canvas_width": 960,
+      "canvas_height": 540,
+      "pixel_art": true,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "characters": [
+    {
+      "id": "ninguem",
+      "name": "Ninguém",
+      "secret_identity": "Everaldo",
+      "role": "herói do povo",
+      "traits": ["corajoso", "irreverente", "habilidoso em capoeira e boxe", "protetor"],
+      "arc": "Protege a população de Soterópolis e reafirma que qualquer pessoa pode ser herói ao agir com responsabilidade e solidariedade."
+    },
+    { "id": "everaldo", "name": "Everaldo", "role": "identidade secreta de Ninguém e gari", "traits": ["trabalhador", "atencioso", "conselheiro"] },
+    { "id": "lua_negra", "name": "Maria Lua Negra", "role": "capoeirista e futura responsável pela academia de Lua Cheia", "traits": ["determinada", "leal", "combativa"], "group": "herois_do_povo" },
+    { "id": "carcara", "name": "Carcará", "role": "mentor de Ninguém e amigo de Lua Cheia", "traits": ["experiente", "estrategista", "protetor"], "group": "herois_do_povo" },
+    { "id": "lua_cheia", "name": "Mestre Lua Cheia", "role": "mestre de capoeira e pai de Lua Negra", "traits": ["respeitado", "orgulhoso", "vingativo quando atacado"] },
+    { "id": "menino_indignado", "name": "Joel", "nickname": "Menino Indignado", "role": "jovem admirador e futuro parceiro de Ninguém", "traits": ["curioso", "insistente", "criativo", "midiático"] },
+    { "id": "chorumilson", "name": "Chorumilson", "role": "urubu fluorescente e comunicador", "traits": ["eloquente", "vaidoso", "ambicioso", "sobrevivente"], "origin": "Único sobrevivente de uma família de urubus que se alimentou da carniça transgênica de um boi mutante." },
+    { "id": "negoço", "name": "Negoço", "role": "bandido e articulador do CGP", "traits": ["perigoso", "estrategista", "vingativo"], "group": "cgp" },
+    { "id": "bagaco", "name": "Bagaço", "role": "irmão de Ninja Gago e operador do CGP", "traits": ["ardiloso", "subordinado", "imprudente"], "group": "cgp" },
+    { "id": "ninja_gago", "name": "Ninja Gago", "role": "antagonista enviado para eliminar Ninguém", "traits": ["teatral", "instável", "orgulhoso"], "group": "cgp" },
+    { "id": "miseravinho", "name": "Miseravinho da TPM", "role": "líder do Trem da Perdição Maligna", "traits": ["agressivo", "irritadiço", "ambicioso"], "group": "tpm" },
+    { "id": "ana_jussara", "name": "Ana Jussara", "role": "líder do TPM", "traits": ["sempre irritada", "autoritária"], "group": "tpm" },
+    { "id": "olavo_magarefe", "name": "Olavo Magarefe", "role": "jornalista veterano do programa Olhar Geral", "traits": ["sensacionalista", "vaidoso", "oportunista"] },
+    { "id": "lurdinha", "name": "Lurdinha", "role": "sobrinha de Lua Negra e cofundadora do fã-clube Filhos de Ninguém" },
+    { "id": "jovem_estudante", "name": "Jovem estudante", "role": "vítima salva por Ninguém na abertura" }
+  ],
+  "groups": [
+    { "id": "herois_do_povo", "name": "Heróis do povo", "members": ["ninguem", "carcara", "lua_negra", "menino_indignado"] },
+    { "id": "cgp", "name": "CGP — Comando Geral do Pânico", "role": "organização criminosa que controla o toque de recolher e tenta eliminar Ninguém", "members": ["negoço", "bagaco", "ninja_gago"] },
+    { "id": "tpm", "name": "TPM — Trem da Perdição Maligna", "role": "grupo criminoso rival que disputa poder na região", "members": ["miseravinho", "ana_jussara"] },
+    { "id": "flor_nativa", "name": "Flor Nativa", "role": "banda de Lua Negra" },
+    { "id": "filhos_de_ninguem", "name": "Filhos de Ninguém", "role": "fã-clube criado por Joel e Lurdinha" }
+  ],
+  "locations": [
+    { "id": "rua_soteropolis", "name": "Rua de Soterópolis", "time": "noite" },
+    { "id": "programa_olhar_geral", "name": "Estúdio do Olhar Geral", "time": "variável" },
+    { "id": "comunidade_oasis", "name": "Comunidade do Oásis", "time": "variável" },
+    { "id": "academia_capoeira", "name": "Academia de Capoeira de Lua Cheia", "time": "variável" },
+    { "id": "quartel_cgp", "name": "Quartel-general do CGP", "time": "variável" },
+    { "id": "manicomio", "name": "Manicômio", "time": "variável" },
+    { "id": "empresa_quimica", "name": "Antiga empresa química desativada", "time": "variável" },
+    { "id": "riacho_contaminado", "name": "Riacho contaminado", "time": "variável" },
+    { "id": "hospital", "name": "Hospital", "time": "variável" },
+    { "id": "elevador_lacerda", "name": "Elevador Lacerda", "time": "final" }
+  ],
+  "themes": ["invisibilidade social", "violência urbana", "corrupção e sensacionalismo midiático", "responsabilidade comunitária", "preservação ambiental", "heroísmo popular"],
+  "episodes": [
+    {
+      "id": "episodio_01_o_heroi_surreal",
+      "number": 1,
+      "title": "O herói surreal",
+      "duration_seconds": 200,
+      "summary": "Ninguém salva uma estudante, torna-se notícia em Soterópolis e descobre que o CGP quer eliminá-lo.",
+      "scenes": [
+        {
+          "id": "ataque_na_rua",
+          "location": "rua_soteropolis",
+          "time": "noite",
+          "duration_seconds": 55,
+          "beats": ["Uma jovem estudante volta para casa depois do toque de recolher.", "Três bandidos planejam atacá-la.", "Ninguém surge e derrota os criminosos com capoeira e boxe.", "Os bandidos são varridos para perto de um container."],
+          "characters": ["jovem_estudante", "ninguem"],
+          "actions": ["rescue", "fight", "comic_defeat"]
+        },
+        {
+          "id": "testemunho_na_tv",
+          "location": "programa_olhar_geral",
+          "duration_seconds": 65,
+          "beats": ["A estudante conta o ocorrido a Olavo Magarefe.", "Olavo noticia ações criminosas coibidas por um vigilante chamado Ninguém.", "A narrativa transforma o herói em fenômeno popular."],
+          "characters": ["jovem_estudante", "olavo_magarefe", "ninguem"],
+          "dialogue": [{ "speaker": "olavo_magarefe", "intent": "sensational_news", "text": "Segundo testemunhas, um peculiar vigilante chamado Ninguém vem coibindo ações criminosas em Soterópolis." }]
+        },
+        {
+          "id": "fuga_de_negoco",
+          "location": "quartel_cgp",
+          "duration_seconds": 80,
+          "beats": ["Negoço foge do presídio em um helicóptero enviado pelo CGP.", "Durante a fuga, conversa com o chefe pelo celular.", "Negoço descobre que o CGP pretende acabar com Ninguém, responsável por sua prisão."],
+          "characters": ["negoço"],
+          "groups": ["cgp"],
+          "actions": ["helicopter_escape", "phone_call", "revenge_setup"]
+        }
+      ]
+    },
+    {
+      "id": "episodio_02_a_vinganca_de_lua_negra",
+      "number": 2,
+      "title": "A vingança de Lua Negra",
+      "duration_seconds": 200,
+      "summary": "Lua Negra encontra o pai ferido, decide assumir a academia e o CGP prepara seu novo assassino.",
+      "scenes": [
+        {
+          "id": "ataque_a_lua_cheia",
+          "location": "comunidade_oasis",
+          "duration_seconds": 65,
+          "beats": ["Mestre Lua Cheia é atacado por bandidos do TPM.", "Miseravinho lidera a ação sob a influência de Ana Jussara.", "Maria Lua Negra encontra o pai desacordado.", "Carcará ajuda a conduzi-lo ao hospital."],
+          "characters": ["lua_cheia", "lua_negra", "carcara", "miseravinho", "ana_jussara"],
+          "groups": ["tpm", "herois_do_povo"],
+          "actions": ["attack", "rescue", "hospital_transfer"]
+        },
+        {
+          "id": "promessa_de_treinamento",
+          "location": "hospital",
+          "duration_seconds": 55,
+          "beats": ["Lua Negra jura vingança.", "Carcará promete ajudá-la a concluir o treinamento.", "Ela se prepara para assumir a academia do pai."],
+          "characters": ["lua_negra", "carcara", "lua_cheia"],
+          "actions": ["vow", "training_commitment"]
+        },
+        {
+          "id": "fuga_do_ninja_gago",
+          "location": "manicomio",
+          "duration_seconds": 80,
+          "beats": ["Bagaço recebe ordens de Negoço.", "Bagaço arquiteta a fuga do irmão, Ninja Gago.", "Ninja Gago surge teatralmente no quartel-general do CGP.", "Ele recebe a missão de aniquilar Ninguém."],
+          "characters": ["bagaco", "ninja_gago", "negoço"],
+          "groups": ["cgp"],
+          "actions": ["escape_plan", "theatrical_entrance", "mission_assignment"]
+        }
+      ]
+    },
+    {
+      "id": "episodio_03_o_urubu_fluorescente",
+      "number": 3,
+      "title": "O urubu fluorescente",
+      "duration_seconds": 200,
+      "summary": "Ninguém cai numa armadilha do CGP, enfrenta Ninja Gago e conhece o urubu que se tornará Chorumilson.",
+      "scenes": [
+        {
+          "id": "pista_na_empresa_quimica",
+          "location": "empresa_quimica",
+          "duration_seconds": 55,
+          "beats": ["Ninguém despista Joel, que insiste em acompanhá-lo.", "O herói segue uma pista sobre armas contrabandeadas do CGP.", "A pista leva a uma antiga empresa química ainda contaminante."],
+          "characters": ["ninguem", "menino_indignado"],
+          "actions": ["investigation", "dodge_companion"]
+        },
+        {
+          "id": "armadilha_do_cgp",
+          "location": "riacho_contaminado",
+          "duration_seconds": 75,
+          "beats": ["Urubus comem a carniça de um boi mutante fluorescente.", "Bagaço usa o local para armar uma emboscada.", "Ninguém é colocado frente a frente com Ninja Gago.", "Os dois travam uma luta pesada acompanhada de insultos mútuos.", "Ninguém cai no riacho contaminado."],
+          "characters": ["ninguem", "ninja_gago", "bagaco"],
+          "groups": ["cgp"],
+          "actions": ["ambush", "fight", "fall_into_contaminated_stream"]
+        },
+        {
+          "id": "nascimento_de_chorumilson",
+          "location": "riacho_contaminado",
+          "duration_seconds": 70,
+          "beats": ["Um urubu fluorescente afugenta Ninja Gago com bicadas.", "Ninguém, machucado, pensa estar delirando por causa da pancada ou da contaminação.", "O urubu revela que fala com desenvoltura.", "Ele conta que é órfão e único sobrevivente da família.", "Ninguém promete levá-lo ao IBAMA, sem perceber que a ave quer ficar famosa."],
+          "characters": ["ninguem", "chorumilson", "ninja_gago"],
+          "actions": ["rescue", "reveal", "comic_dialogue"]
+        }
+      ]
+    },
+    {
+      "id": "episodio_04_o_plano",
+      "number": 4,
+      "title": "O plano dos heróis",
+      "duration_seconds": 200,
+      "summary": "Ninguém é resgatado, forma uma aliança com Lua Negra e Carcará e prepara uma armadilha para os criminosos.",
+      "scenes": [
+        {
+          "id": "urubu_no_hospital",
+          "location": "hospital",
+          "duration_seconds": 55,
+          "beats": ["Lua Cheia agradece a Carcará por proteger sua filha e a academia.", "O cheiro de carniça faz Lua Cheia desmaiar novamente.", "Chorumilson aparece na janela e informa que Ninguém precisa de ajuda.", "Os amigos resgatam Ninguém."],
+          "characters": ["lua_cheia", "carcara", "lua_negra", "chorumilson", "ninguem"],
+          "actions": ["comic_faint", "warning", "rescue"]
+        },
+        {
+          "id": "plano_de_captura",
+          "location": "hospital",
+          "duration_seconds": 75,
+          "beats": ["Ninguém, Carcará e Lua Negra traçam um plano.", "O objetivo é capturar Ninja Gago e Miseravinho.", "A rivalidade entre CGP e TPM será usada contra os próprios criminosos.", "Joel escuta tudo escondido em uma árvore perto da janela."],
+          "characters": ["ninguem", "carcara", "lua_negra", "menino_indignado"],
+          "groups": ["cgp", "tpm"],
+          "actions": ["strategy", "eavesdropping"]
+        },
+        {
+          "id": "isca_para_ninja",
+          "location": "comunidade_oasis",
+          "duration_seconds": 70,
+          "beats": ["Ninguém atrai a atenção de Ninja Gago.", "O duelo é preparado com Joel como árbitro.", "A armadilha aproxima Ninja Gago, Miseravinho e os grupos rivais."],
+          "characters": ["ninguem", "ninja_gago", "menino_indignado", "miseravinho"],
+          "actions": ["provocation", "duel_setup", "trap"]
+        }
+      ]
+    },
+    {
+      "id": "episodio_05_carnica_geral",
+      "number": 5,
+      "title": "Carniça Geral",
+      "duration_seconds": 200,
+      "summary": "Os heróis derrotam os criminosos, Chorumilson faz sua primeira entrevista e Lua Negra celebra a recuperação do pai.",
+      "scenes": [
+        {
+          "id": "duelo_e_batalha_final",
+          "location": "comunidade_oasis",
+          "duration_seconds": 90,
+          "beats": ["Ninguém derrota Ninja Gago no duelo.", "Os heróis enfrentam Miseravinho, seus dois capangas e Ninja Gago.", "A rivalidade entre Miseravinho, Bagaço e Ninja Gago provoca uma briga interna.", "Ninguém e Joel assistem de camarote enquanto Lua Negra e Carcará terminam o serviço."],
+          "characters": ["ninguem", "lua_negra", "carcara", "menino_indignado", "ninja_gago", "miseravinho", "bagaco"],
+          "actions": ["duel", "team_battle", "rivalry_exploitation", "victory"]
+        },
+        {
+          "id": "entrevista_dos_derrotados",
+          "location": "comunidade_oasis",
+          "duration_seconds": 45,
+          "beats": ["Os bandidos são imobilizados.", "Chorumilson entrevista os criminosos.", "Joel atua como câmera man.", "Miseravinho e seus capangas são levados para a detenção.", "Ninja Gago retorna ao manicômio em uma ambulância cantando."],
+          "characters": ["chorumilson", "menino_indignado", "miseravinho", "ninja_gago"],
+          "actions": ["interview", "detention", "ambulance_departure"]
+        },
+        {
+          "id": "festa_na_academia",
+          "location": "academia_capoeira",
+          "duration_seconds": 65,
+          "beats": ["Bagaço desaparece após ser ameaçado por Negoço.", "Lua Negra comemora a recuperação do pai.", "Ela se apresenta com a banda Flor Nativa.", "Ninguém, Carcará, Joel e moradores da Comunidade do Oásis participam da celebração."],
+          "characters": ["lua_negra", "lua_cheia", "ninguem", "carcara", "menino_indignado"],
+          "groups": ["flor_nativa"],
+          "actions": ["celebration", "music_performance"]
+        }
+      ]
+    },
+    {
+      "id": "episodio_06_qualquer_um_pode_ser_heroi",
+      "number": 6,
+      "title": "Qualquer um pode ser herói",
+      "duration_seconds": 200,
+      "summary": "Joel cria o fã-clube Filhos de Ninguém, Chorumilson vira apresentador e Everaldo revela o sentido do heroísmo.",
+      "scenes": [
+        {
+          "id": "fundacao_do_fa_clube",
+          "location": "comunidade_oasis",
+          "duration_seconds": 45,
+          "beats": ["Joel funda com Lurdinha o fã-clube Filhos de Ninguém.", "O grupo transforma a aventura em movimento comunitário."],
+          "characters": ["menino_indignado", "lurdinha"],
+          "groups": ["filhos_de_ninguem"],
+          "actions": ["found_fan_club"]
+        },
+        {
+          "id": "chorumilson_na_tv",
+          "location": "programa_olhar_geral",
+          "duration_seconds": 75,
+          "beats": ["Joel liga a TV e vê Olavo Magarefe exibindo a entrevista gravada.", "Olavo não credita Joel como câmera man.", "Chorumilson é apresentado à população de Soterópolis como comunicador.", "A ave aparece de óculos escuros, gravata e boné patrocinado.", "Chorumilson anuncia o novo programa Carniça Geral e diz que honrará o legado de Olavo."],
+          "characters": ["menino_indignado", "olavo_magarefe", "chorumilson"],
+          "actions": ["watch_tv", "media_debut", "new_show_announcement"],
+          "dialogue": [{ "speaker": "chorumilson", "text": "Agora o grande comunicador Olavo Magarefe pode aposentar-se em paz. Eu honrarei o seu legado como âncora no novo programa Carniça Geral." }]
+        },
+        {
+          "id": "everaldo_e_joel",
+          "location": "rua_soteropolis",
+          "time": "tarde",
+          "duration_seconds": 60,
+          "beats": ["Everaldo trabalha como gari varrendo uma rua da comunidade.", "Joel pergunta se ele tem estudado e pergunta pelo pai.", "Joel conta que o pai está cumprindo pena, mas o aconselha a estudar e ser um homem de bem.", "Joel pergunta se poderá ser herói como Ninguém.", "Everaldo responde que ele já é um herói ao escutar bons conselhos, ajudar a mãe e agir corretamente.", "Joel sai com sua caixa de picolés cantando a música de Ninguém."],
+          "characters": ["everaldo", "menino_indignado"],
+          "actions": ["work", "conversation", "mentor", "departure"]
+        },
+        {
+          "id": "final_no_elevador",
+          "location": "elevador_lacerda",
+          "time": "final",
+          "duration_seconds": 20,
+          "beats": ["Chorumilson pergunta quem protegerá as crianças e a população de bem de Soterópolis.", "Ninguém surge sobre o Elevador Lacerda e grita seu nome alongado.", "Encerramento com possibilidade de continuidade."],
+          "characters": ["chorumilson", "ninguem"],
+          "actions": ["broadcast_question", "hero_reveal", "final_shout"],
+          "dialogue": [
+            { "speaker": "chorumilson", "text": "A máquina é cruel! Né de brinquedo não! Quem vai proteger as nossas crianças? Quem vai salvar toda a população de bem de Soterópolis?" },
+            { "speaker": "ninguem", "text": "Niiiiiiiiiiiiinguéééééééééém!" }
+          ]
+        }
+      ]
+    }
+  ],
+  "production_notes": {
+    "adaptation_note": "A divisão em seis episódios é uma organização editorial derivada do argumento original; o PDF também prevê uma versão única de 20 minutos.",
+    "visual_direction": ["Contrastar a noite urbana de Soterópolis, a comunidade e os ambientes contaminados.", "Representar as lutas com linguagem de capoeira e boxe, preservando o tom de comédia e aventura.", "Destacar a fluorescência temporária de Chorumilson e do boi mutante como elemento visual recorrente.", "Tratar a televisão e o sensacionalismo de Olavo como recurso de transição e comentário social.", "Encerrar com o Elevador Lacerda como imagem-símbolo de Soterópolis."],
+    "audio_direction": ["Criar uma identidade musical heroica e popular para Ninguém.", "Usar sons de capoeira, luta, televisão, helicóptero, ambulância e ambiente comunitário.", "Diferenciar CGP e TPM por motivos musicais ou texturas sonoras distintas.", "Reservar uma assinatura sonora para Chorumilson e para o programa Carniça Geral."],
+    "source_date": "04/12/2025",
+    "source_revision_date": "27/09/2026"
+  }
+}
