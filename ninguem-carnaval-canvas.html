@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>NINGUÉM · Carnaval 2027</title>
+<style>
+  :root{--bg:#050508;--fg:#e8e8e8;--accent:#f2c94c;--accent2:#c93232;color-scheme:dark}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;user-select:none}
+  html,body{margin:0;padding:0;height:100%;width:100%;
+    background:var(--bg);color:var(--fg);
+    font-family:ui-sans-serif,system-ui,sans-serif;overflow:hidden;
+    touch-action:none;overscroll-behavior:none;position:fixed}
+  #stage{position:fixed;inset:0;display:flex;align-items:center;
+    justify-content:center;background:#000}
+  canvas{display:block;image-rendering:pixelated;
+    max-width:100vw;max-height:100vh;
+    box-shadow:0 0 120px rgba(242,201,76,.06) inset}
+  #vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:radial-gradient(ellipse at center,transparent 40%,
+      rgba(0,0,0,.75) 100%)}
+  #indicador{position:fixed;top:max(14px,env(safe-area-inset-top));
+    left:16px;z-index:10;font-family:ui-monospace,Menlo,monospace;
+    font-size:10px;letter-spacing:.2em;color:#555;text-transform:uppercase;
+    pointer-events:none;transition:color .4s;text-shadow:0 2px 6px #000}
+  #indicador b{color:var(--accent);font-weight:600}
+  #indicador.on b{color:var(--accent2)}
+  #play{position:fixed;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;z-index:50;
+    background:#000;cursor:pointer;transition:opacity .8s}
+  #play.hidden{opacity:0;pointer-events:none}
+  #play h1{margin:0;font-size:clamp(48px,14vw,140px);
+    letter-spacing:-.05em;font-weight:900;
+    background:linear-gradient(120deg,#f2c94c 0%,#c93232 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    line-height:.9;text-align:center}
+  #play .sub{margin-top:18px;font-size:clamp(11px,2.6vw,15px);
+    color:#666;letter-spacing:.5em;text-transform:uppercase;text-align:center}
+  #play .tag{margin-top:8px;font-size:clamp(10px,2.2vw,13px);
+    color:#444;letter-spacing:.3em;text-transform:uppercase;
+    font-style:italic;text-align:center}
+  #play .hint{margin-top:60px;font-size:12px;color:#555;
+    letter-spacing:.3em;text-transform:uppercase;
+    animation:blink 1.6s infinite}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:.9}}
+  #som{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));
+    right:16px;z-index:20;background:rgba(20,20,28,.4);
+    border:1px solid rgba(200,200,220,.15);color:#555;
+    font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+    padding:6px 10px;border-radius:3px;cursor:pointer;
+    font-family:inherit;font-weight:600;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #som.on{color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div id="stage"><canvas id="game" width="960" height="540"></canvas></div>
+<div id="vignette"></div>
+
+<div id="indicador">seção · <b id="indVal">—</b></div>
+
+<button id="som">🔇 som</button>
+
+<div id="play">
+  <h1>NINGUÉM</h1>
+  <div class="sub">Carnaval 2027</div>
+  <div class="tag">Mudança do Garcia · Soterópolis</div>
+  <div class="hint">toque para começar</div>
+</div>
+
+<script>
+/* ============================================================
+   NINGUÉM · CARNAVAL 2027 — MUDANÇA DO GARCIA
+   Videoclipe Rumpilezz com clímax de Carnaval
+   ============================================================ */
+
+const cvs = document.getElementById('game');
+const ctx = cvs.getContext('2d');
+const W = cvs.width, H = cvs.height;
+const $ = id => document.getElementById(id);
+
+function fitCanvas(){
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const aspect = W / H;
+  let cw = vw, ch = vw / aspect;
+  if (ch > vh){ ch = vh; cw = ch * aspect; }
+  cvs.style.width = cw + 'px';
+  cvs.style.height = ch + 'px';
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('orientationchange', ()=>setTimeout(fitCanvas, 100));
+fitCanvas();
+
+/* ---------- PALETA ---------- */
+const P = {
+  preto:'#050508',
+  ceuDia:'#7DA4F1',
+  ceuTarde:'#e8a870',
+  ceuNoite:'#0a0e2a',
+  ceuFimTarde:'#f2a94c',
+  mar:'#2a5a8a',
+  marEscuro:'#1a3a5a',
+  areia:'#e8d8b0',
+  pedra:'#3a2518',
+  igreja:'#f0e8d8',
+  igrejaSombra:'#c8b8a0',
+  casarao:'#d8a05a',
+  casarao2:'#e8b870',
+  casarao3:'#c96030',
+  casarao4:'#7a9a5a',
+  casarao5:'#5a7aa8',
+  telhado:'#8a3a2a',
+  palmeira:'#3a6a2a',
+  // personagens
+  ning_camisa:'#f2c94c',
+  ning_camisaDark:'#c9a227',
+  ning_jeans:'#2a5a9a',
+  ning_tenis:'#c93232',
+  ning_luva:'#1a2a4a',
+  ning_mascara:'#e8e8e8',
+  ning_pele:'#8a5a3a',
+  lua_top:'#1a1a1a',
+  lua_calca:'#a0a0a8',
+  lua_olho:'#f2c94c',
+  lua_pele:'#6a3a1a',
+  men_bone:'#f2c94c',
+  men_camisa:'#2a5a9a',
+  men_bermuda:'#3a7a3a',
+  men_pele:'#8a5a3a',
+  car_capacete:'#3a7ab8',
+  car_mascara:'#1a1a22',
+  car_armadura:'#7a8a9a',
+  car_couro:'#7a3a1a',
+  pav_azul:'#2a5a9a',
+  pav_pena1:'#7ac94c',
+  pav_penaOlho:'#2a8ac9',
+  pav_penaMiolo:'#8a2a5a',
+  urubu_pena:'#1a1a1a',
+  urubu_bico:'#8a5a2a',
+  ninja_azul:'#1a3a6a',
+  ninja_katana:'#c8c8c8',
+  ninja_faixa:'#8a1a1a',
+  // robô
+  roboBase:'#3a4a5a',
+  roboTorso:'#4a3a2a',
+  roboPainel:'#f2c94c',
+  roboLuz:'#c93232',
+  roboOlho:'#c93232',
+  // povo
+  povo1:'#1a1a22',
+  povo2:'#2a2a3a',
+  povo3:'#3a2a2a',
+  contorno:'#08080c',
+  branco:'#f0f0f0',
+  lampiao:'#f2c94c',
+};
+
+/* ============================================================
+   ÁUDIO — motor Rumpilezz com Carnaval
+   ============================================================ */
+const AC = window.AudioContext || window.webkitAudioContext;
+let actx = null, master = null, comp = null, reverb = null, delay = null;
+let playing = false, startedAt = 0, currentSection = -1;
+let schedTimer = null, fatigue = 0, loopCount = 0, cenaAtual = 0;
+
+const mtof = n => 440 * Math.pow(2, (n - 69) / 12);
+const IJEXA = [1,0,0,1,0,0,1,0];
+const BARRA = [0,1,0,0,1,0,0,1];
+const CELL_SAX = [0, 3, 7, 10, 12, 10, 7, 3];
+const CELL_TBN = [0, 5, 7, 12, 10, 7, 5, 3];
+const CELL_TPT = [12, 15, 19, 22, 19, 15, 12, 10];
+const CHORDS = [
+  [50, 57, 62, 65, 69],[55, 62, 65, 69, 72],
+  [58, 62, 65, 68, 72],[57, 61, 64, 68, 71],
+  [46, 53, 57, 60, 65],[51, 58, 62, 65, 70],
+  [53, 60, 64, 67, 71],[49, 56, 60, 63, 68],
+];
+
+function initAudio(){
+  if (actx) return;
+  actx = new AC();
+  master = actx.createGain();
+  master.gain.value = 0.65;
+  comp = actx.createDynamicsCompressor();
+  comp.threshold.value = -14; comp.ratio.value = 4;
+  reverb = actx.createConvolver();
+  const irLen = actx.sampleRate * 2.2;
+  const ir = actx.createBuffer(2, irLen, actx.sampleRate);
+  for (let ch = 0; ch < 2; ch++){
+    const d = ir.getChannelData(ch);
+    for (let i = 0; i < irLen; i++){
+      const t = i / actx.sampleRate;
+      d[i] = (Math.random()*2-1) * Math.pow(1 - t/2.2, 2.5) * 0.5;
+    }
+  }
+  reverb.buffer = ir;
+  const revGain = actx.createGain();
+  revGain.gain.value = 0.22;
+  reverb.connect(revGain).connect(comp);
+  delay = actx.createDelay(0.5);
+  delay.delayTime.value = 0.11;
+  const dGain = actx.createGain(); dGain.gain.value = 0.14;
+  const dFilt = actx.createBiquadFilter();
+  dFilt.type = 'highpass'; dFilt.frequency.value = 700;
+  delay.connect(dFilt).connect(dGain).connect(comp);
+  const fb = actx.createGain(); fb.gain.value = 0.28;
+  delay.connect(fb).connect(delay);
+  master.connect(comp);
+  comp.connect(actx.destination);
+}
+
+function out(node, sendReverb=true){
+  node.connect(master);
+  if (sendReverb && reverb) node.connect(reverb);
+}
+
+function atabaque(t, freq=120, dur=0.35, gain=0.5, tone=1){
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type='sine';
+  o.frequency.setValueAtTime(freq*1.4, t);
+  o.frequency.exponentialRampToValueAtTime(freq*0.7, t+dur*0.7);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+0.005);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  o.connect(g); out(g, true);
+  o.start(t); o.stop(t+dur+0.05);
+  if (tone){
+    const b = actx.createBuffer(1, actx.sampleRate*0.03, actx.sampleRate);
+    const d = b.getChannelData(0);
+    for (let i=0;i<d.length;i++) d[i]=(Math.random()*2-1);
+    const s = actx.createBufferSource(); s.buffer=b;
+    const f = actx.createBiquadFilter(); f.type='bandpass';
+    f.frequency.value=1800; f.Q.value=1;
+    const ng = actx.createGain();
+    ng.gain.setValueAtTime(gain*0.5, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t+0.03);
+    s.connect(f).connect(ng); out(ng, false);
+    s.start(t); s.stop(t+0.04);
+  }
+}
+
+function ganzá(t, dur=0.06, gain=0.15, filter=6000){
+  const b = actx.createBuffer(1, actx.sampleRate*dur, actx.sampleRate);
+  const d = b.getChannelData(0);
+  for (let i=0;i<d.length;i++) d[i]=(Math.random()*2-1);
+  const s = actx.createBufferSource(); s.buffer=b;
+  const f = actx.createBiquadFilter(); f.type='bandpass';
+  f.frequency.value=filter; f.Q.value=1.2;
+  const g = actx.createGain();
+  g.gain.setValueAtTime(gain, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  s.connect(f).connect(g); out(g, true);
+  s.start(t); s.stop(t+dur+0.02);
+}
+
+function agogô(t, freq=880, dur=0.14, gain=0.14){
+  const o = actx.createOscillator(), o2 = actx.createOscillator();
+  const g = actx.createGain();
+  o.type='square'; o.frequency.value=freq;
+  o2.type='square'; o2.frequency.value=freq*1.48;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+0.003);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  o.connect(g); o2.connect(g); out(g, true);
+  o.start(t); o.stop(t+dur+0.02);
+  o2.start(t); o2.stop(t+dur+0.02);
+}
+
+function baixo(t, midiNote, dur=0.5, gain=0.28){
+  const f = mtof(midiNote);
+  const o1 = actx.createOscillator(); o1.type='sawtooth'; o1.frequency.value=f;
+  const o2 = actx.createOscillator(); o2.type='sine'; o2.frequency.value=f/2;
+  const filt = actx.createBiquadFilter(); filt.type='lowpass';
+  filt.frequency.setValueAtTime(220, t);
+  filt.frequency.linearRampToValueAtTime(700, t+0.02);
+  filt.frequency.exponentialRampToValueAtTime(180, t+dur);
+  filt.Q.value = 6;
+  const g = actx.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+0.006);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  o1.connect(filt); o2.connect(filt);
+  filt.connect(g); out(g, false);
+  o1.start(t); o1.stop(t+dur+0.03);
+  o2.start(t); o2.stop(t+dur+0.03);
+}
+
+function metal(t, midiNote, dur=0.28, gain=0.06, family='sax'){
+  const f = mtof(midiNote);
+  const detunes = family==='tpt' ? [-8,0,9] : [-6,0,7];
+  const o1 = actx.createOscillator(); o1.type='sawtooth'; o1.frequency.value=f; o1.detune.value=detunes[0];
+  const o2 = actx.createOscillator(); o2.type='sawtooth'; o2.frequency.value=f; o2.detune.value=detunes[1];
+  const o3 = actx.createOscillator(); o3.type='square';   o3.frequency.value=f; o3.detune.value=detunes[2];
+  const filt = actx.createBiquadFilter(); filt.type='bandpass';
+  const formants = {
+    sax:{f:1100,q:1.8,lp:3200}, tbn:{f:700,q:2.0,lp:2400}, tpt:{f:1500,q:2.4,lp:5000}
+  }[family]||{f:1100,q:1.5,lp:3000};
+  filt.frequency.setValueAtTime(formants.f*1.5, t);
+  filt.frequency.exponentialRampToValueAtTime(formants.f, t+0.05);
+  filt.Q.value = formants.q;
+  const lp = actx.createBiquadFilter(); lp.type='lowpass';
+  lp.frequency.setValueAtTime(formants.lp*1.6, t);
+  lp.frequency.exponentialRampToValueAtTime(formants.lp, t+0.08);
+  const g = actx.createGain();
+  const atk = family==='tpt' ? 0.008 : 0.02;
+  const rel = family==='tbn' ? 0.22 : 0.14;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+atk);
+  g.gain.setValueAtTime(gain, t+dur-rel);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  o1.connect(filt); o2.connect(filt); o3.connect(filt);
+  filt.connect(lp).connect(g); out(g, true);
+  if (family==='tpt'||family==='sax') g.connect(delay);
+  o1.start(t); o1.stop(t+dur+0.05);
+  o2.start(t); o2.stop(t+dur+0.05);
+  o3.start(t); o3.stop(t+dur+0.05);
+}
+
+function voz(t, midiNote, dur=0.6, gain=0.09, vowel='a'){
+  const f = mtof(midiNote);
+  const o = actx.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+  const o2 = actx.createOscillator(); o2.type='triangle'; o2.frequency.value=f; o2.detune.value=-7;
+  const formants = {
+    a:[[800,1.0],[1150,0.63],[2900,0.1]],
+    o:[[500,1.0],[1000,0.5],[2400,0.08]],
+    e:[[600,1.0],[1700,0.5],[2600,0.1]],
+    i:[[350,1.0],[2300,0.4],[3000,0.15]],
+  }[vowel]||[[800,1],[1150,0.6],[2900,0.1]];
+  const sum = actx.createGain(); sum.gain.value=0.4;
+  const filt = actx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=4000;
+  o.connect(sum); o2.connect(sum);
+  formants.forEach(([freq,q])=>{
+    const bp = actx.createBiquadFilter(); bp.type='bandpass';
+    bp.frequency.value=freq; bp.Q.value=q*8;
+    const bg = actx.createGain(); bg.gain.value=q;
+    sum.connect(bp).connect(bg); bg.connect(filt);
+  });
+  const g = actx.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+0.06);
+  g.gain.setValueAtTime(gain, t+dur-0.15);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  filt.connect(g); out(g, true);
+  const lfo = actx.createOscillator(); lfo.frequency.value=5.2;
+  const lfoG = actx.createGain(); lfoG.gain.value=5;
+  lfo.connect(lfoG); lfoG.connect(o.detune); lfoG.connect(o2.detune);
+  lfo.start(t); lfo.stop(t+dur+0.05);
+  o.start(t); o.stop(t+dur+0.05);
+  o2.start(t); o2.stop(t+dur+0.05);
+}
+
+function naipe(t, notes, dur, gain, family){
+  notes.forEach((n,i)=>metal(t+i*0.006, n, dur, gain/Math.sqrt(notes.length), family));
+}
+function tuttiHit(t, root=50){
+  const low=[root,root+7,root+12];
+  const mid=[root+12,root+19,root+24];
+  const high=[root+24,root+31,root+36];
+  naipe(t, low, 0.9, 0.16, 'tbn');
+  naipe(t+.01, mid, 0.9, 0.14, 'sax');
+  naipe(t+.02, high,0.9, 0.12, 'tpt');
+  atabaque(t, 60, 0.6, 0.6, 1);
+  atabaque(t+.02, 90, 0.35, 0.4, 0);
+}
+
+let t0, bar=0;
+function step(){ return (60/88)/2; }
+function bpm(){ return 88; }
+
+function secPercBase(mult=1){
+  for (let s=0;s<8;s++){
+    if (IJEXA[s]) atabaque(t0+s*step(), 105, 0.3, 0.42*mult);
+    if (BARRA[s]) atabaque(t0+s*step(), 145, 0.16, 0.22*mult, 0);
+    if (s%2===1) ganzá(t0+s*step(), 0.05, 0.075*mult);
+  }
+  agogô(t0, 880, 0.14, 0.09);
+  agogô(t0+3*step(), 1174, 0.14, 0.07);
+}
+function secBassBase(){
+  const root=38;
+  baixo(t0+0*step(), root, 0.32, 0.26);
+  baixo(t0+3*step(), root+7, 0.26, 0.24);
+  baixo(t0+5*step(), root+10, 0.26, 0.24);
+  baixo(t0+7*step(), root+12, 0.3, 0.25);
+}
+
+function secAtabaque(i){
+  for (let s=0;s<8;s++){
+    if (IJEXA[s]) atabaque(t0+s*step(), 110+(i%2)*10, 0.32, 0.42);
+    else if (s%4===0) atabaque(t0+s*step(), 160, 0.14, 0.18, 0);
+  }
+  for (let s=0;s<6;s++) ganzá(t0+s*(step()*8/6), 0.05, 0.08);
+}
+function secIjexa(i){
+  for (let s=0;s<8;s++){
+    if (IJEXA[s]) atabaque(t0+s*step(), 105, 0.32, 0.42);
+    if (BARRA[s]) atabaque(t0+s*step(), 150, 0.16, 0.25, 0);
+    if (s%2===1) ganzá(t0+s*step(), 0.05, 0.09);
+  }
+  const root=38;
+  [0,3,5,7].forEach((p,k)=>baixo(t0+p*step(), root+(k===1?7:0), 0.35, 0.24));
+}
+function secSaxes(i){
+  secPercBase(); secBassBase();
+  const chord=CHORDS[i%CHORDS.length], cell=CELL_SAX;
+  for (let s=0;s<8;s++){
+    const n = chord[(s+i)%chord.length] + cell[(s+i*2)%cell.length];
+    metal(t0+s*step(), n, 0.22, 0.05, 'sax');
+  }
+  for (let s=1;s<8;s+=2){
+    const n = chord[(s+i+2)%chord.length] + 12;
+    metal(t0+s*step(), n, 0.18, 0.035, 'sax');
+  }
+}
+function secTrombones(i){
+  secPercBase(); secBassBase(); secSaxes(i);
+  const chord=CHORDS[i%CHORDS.length], cell=CELL_TBN;
+  for (let s=0;s<8;s+=2){
+    const n = chord[(s/2)%chord.length] - 12 + cell[s];
+    metal(t0+s*step(), n, 0.3, 0.055, 'tbn');
+  }
+}
+function secTrompetes(i){
+  secPercBase(); secBassBase(); secSaxes(i); secTrombones(i);
+  const chord=CHORDS[i%CHORDS.length], cell=CELL_TPT;
+  for (let s=0;s<8;s++){
+    if (s%3!==2){
+      const n = chord[s%chord.length] + cell[s];
+      metal(t0+s*step(), n, 0.18, 0.045, 'tpt');
+    }
+  }
+}
+function secTutti(i){
+  secPercBase(1.15); secBassBase();
+  secSaxes(i); secTrombones(i); secTrompetes(i);
+  const ascent=[62,65,69,71,74,76,79,81];
+  ascent.forEach((n,k)=>{
+    if (i%2===0) voz(t0+k*step()*1.1, n, 0.5, 0.075, k%2?'a':'e');
+  });
+  for (let s=0;s<4;s++) metal(t0+s*step()*2, 38+s*3, 0.8, 0.05, 'tbn');
+}
+function secSuspensao(i){
+  const cell=[1,0,0,1,0,0,0,1];
+  for (let s=0;s<8;s++){
+    if (cell[s]) atabaque(t0+s*step(), 100, 0.4, 0.5);
+  }
+  [69,71,72,74,76].forEach((n,k)=>voz(t0+k*step()*0.9, n, 0.6, 0.085, 'a'));
+  ganzá(t0+4*step(), 0.4, 0.05);
+}
+function secNinguem(i){
+  tuttiHit(t0, 50);
+  tuttiHit(t0+4*step(), 50);
+  atabaque(t0+4*step(), 70, 0.5, 0.55);
+  naipe(t0+0.02, [38,50,62], 1.0, 0.14, 'tbn');
+  naipe(t0+0.05, [74,77,81], 0.6, 0.11, 'tpt');
+}
+
+/* ============ CARNAVAL ============ */
+function secCarnavalMontagem(i){
+  const s = step();
+  atabaque(t0 + 0*s, 70, 0.4, 0.6, 1);
+  atabaque(t0 + 4*s, 90, 0.3, 0.5, 0);
+  atabaque(t0 + 6*s, 60, 0.5, 0.55, 1);
+
+  for (let k = 0; k < 8; k++){
+    if (k % 2 === 1) ganzá(t0 + k*s, 0.04, 0.12, 8000);
+    if (k === 3 || k === 7) ganzá(t0 + k*s + s*0.5, 0.05, 0.1, 7000);
+  }
+
+  agogô(t0 + 0*s, 1320, 0.15, 0.12);
+  agogô(t0 + 2*s, 880, 0.13, 0.1);
+  agogô(t0 + 5*s, 1320, 0.15, 0.11);
+
+  const root = 38;
+  baixo(t0 + 0*s, root, 0.4, 0.3);
+  baixo(t0 + 2*s, root + 5, 0.3, 0.26);
+  baixo(t0 + 4*s, root + 7, 0.3, 0.26);
+  baixo(t0 + 6*s, root + 5, 0.3, 0.26);
+
+  const prog = i / 8;
+  if (i % 2 === 0){
+    const chord = CHORDS[i % CHORDS.length];
+    metal(t0 + 0*s, chord[0] - 12, 0.4, 0.08, 'tbn');
+    metal(t0 + 4*s, chord[0] - 12, 0.4, 0.08, 'tbn');
+  }
+  if (prog > 0.5){
+    const f = [62, 65, 69, 74, 77, 81];
+    f.forEach((n, k) => {
+      if (i % 2 === 0) metal(t0 + k*s*0.6, n, 0.2, 0.06, 'tpt');
+    });
+  }
+  if (i % 3 === 0){
+    voz(t0 + 0*s, 62, 0.4, 0.06, 'e');
+    voz(t0 + 2*s, 65, 0.4, 0.06, 'e');
+  }
+}
+
+function secCarnavalClimax(i){
+  const s = step();
+  atabaque(t0 + 0*s, 55, 0.5, 0.7, 1);
+  atabaque(t0 + 2*s, 70, 0.4, 0.6, 1);
+  atabaque(t0 + 4*s, 55, 0.5, 0.7, 1);
+  atabaque(t0 + 6*s, 80, 0.4, 0.55, 1);
+
+  for (let k = 0; k < 8; k++){
+    ganzá(t0 + k*s, 0.05, 0.13, 8500);
+    if (k % 4 === 2) ganzá(t0 + k*s + s*0.5, 0.05, 0.11, 7000);
+  }
+
+  for (let k = 0; k < 4; k++){
+    agogô(t0 + k*2*s, 1320, 0.15, 0.13);
+    agogô(t0 + k*2*s + s, 880, 0.13, 0.1);
+  }
+
+  const root = 38;
+  baixo(t0 + 0*s, root, 0.4, 0.32);
+  baixo(t0 + 2*s, root + 5, 0.35, 0.28);
+  baixo(t0 + 4*s, root + 7, 0.35, 0.28);
+  baixo(t0 + 6*s, root + 10, 0.35, 0.28);
+
+  const chord = CHORDS[i % CHORDS.length];
+  naipe(t0 + 0*s, [chord[0]-12, chord[0], chord[0]+7], 0.4, 0.12, 'tbn');
+  naipe(t0 + 4*s, [chord[0]-12, chord[0], chord[0]+7], 0.4, 0.12, 'tbn');
+  naipe(t0 + 2*s, [74, 77, 81], 0.3, 0.1, 'tpt');
+  naipe(t0 + 6*s, [79, 81, 86], 0.3, 0.1, 'tpt');
+  naipe(t0 + 0*s, [62, 65, 69], 0.5, 0.07, 'sax');
+  naipe(t0 + 4*s, [65, 69, 72], 0.5, 0.07, 'sax');
+
+  if (i % 4 === 0){
+    voz(t0 + 0*s, 62, 0.5, 0.09, 'a');
+    voz(t0 + 2*s, 65, 0.5, 0.09, 'a');
+    voz(t0 + 4*s, 69, 0.5, 0.09, 'a');
+  }
+
+  if (i === 7){
+    tuttiHit(t0 + 0*s, 50);
+    tuttiHit(t0 + 4*s, 50);
+    agogô(t0 + 6*s, 2640, 0.4, 0.15);
+    agogô(t0 + 6.5*s, 3520, 0.4, 0.12);
+  }
+}
+
+/* ---------- SEÇÕES ---------- */
+const SECTIONS = [
+  { name:'atabaque',  bars:3, cena:'pelourinho-vazio', fn: secAtabaque },
+  { name:'ijexá',     bars:4, cena:'pelourinho-povo',  fn: secIjexa },
+  { name:'saxes',     bars:4, cena:'bonfim',           fn: secSaxes },
+  { name:'trombones', bars:4, cena:'mercado',          fn: secTrombones },
+  { name:'trompetes', bars:3, cena:'terreiro',         fn: secTrompetes },
+  { name:'tutti',     bars:6, cena:'farol',            fn: secTutti },
+  { name:'suspensão', bars:3, cena:'forte',            fn: secSuspensao },
+  { name:'NINGUÉM',   bars:3, cena:'dique',            fn: secNinguem },
+  { name:'montagem',  bars:6, cena:'garcia-montagem',  fn: secCarnavalMontagem },
+  { name:'CARNAVAL',  bars:8, cena:'garcia-climax',    fn: secCarnavalClimax },
+];
+
+/* ============================================================
+   CENÁRIOS
+   ============================================================ */
+function desenhaCeu(cores){
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  cores.forEach((c, i) => g.addColorStop(i/(cores.length-1), c));
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+}
+function desenhaSol(cx, cy, r, cor){
+  ctx.save();
+  ctx.globalAlpha = 0.7;
+  ctx.fillStyle = cor;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function desenhaPelourinho(){
+  desenhaCeu(['#e8a870', '#f2c94c', '#c98a5a']);
+  desenhaSol(W*0.75, H*0.35, 50, '#f2e8a0');
+  const baseY = H*0.55;
+  for (let i = 0; i < 9; i++){
+    const cor = [P.casarao, P.casarao2, P.casarao3, P.casarao4, P.casarao5][i % 5];
+    const cx = i * (W/9);
+    const cw = W/9 + 2;
+    ctx.fillStyle = cor;
+    ctx.fillRect(cx, baseY, cw, H*0.45);
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    ctx.strokeRect(cx, baseY, cw, H*0.45);
+    ctx.fillStyle = P.telhado;
+    ctx.fillRect(cx - 4, baseY - 8, cw + 8, 10);
+    ctx.fillStyle = 'rgba(26,18,8,0.7)';
+    for (let wy = baseY + 20; wy < H*0.9; wy += 40){
+      for (let wx = cx + 15; wx < cx + cw - 20; wx += 35){
+        ctx.fillRect(wx, wy, 12, 18);
+      }
+    }
+  }
+  ctx.fillStyle = P.pedra;
+  ctx.fillRect(0, H*0.9, W, H*0.1);
+  for (let x = 0; x < W; x += 24){
+    for (let y = H*0.9; y < H; y += 16){
+      const off = ((x/24) + (y/16)) % 2;
+      ctx.fillStyle = off ? '#1a0e08' : '#2a1810';
+      ctx.fillRect(x, y, 22, 14);
+    }
+  }
+  ctx.fillStyle = P.contorno;
+  ctx.fillRect(W*0.15, H*0.35, 4, H*0.55);
+  ctx.fillStyle = P.lampiao;
+  ctx.beginPath();
+  ctx.arc(W*0.15 + 2, H*0.35, 12, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function desenhaBonfim(){
+  desenhaCeu(['#7DA4F1', '#a8c4e8', '#e8d8b0']);
+  const igX = W*0.35, igY = H*0.25, igW = W*0.3, igH = H*0.6;
+  ctx.fillStyle = P.igreja;
+  ctx.fillRect(igX, igY, igW, igH);
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+  ctx.strokeRect(igX, igY, igW, igH);
+  ctx.fillStyle = P.igreja;
+  ctx.fillRect(igX - 60, igY - 30, 60, igH + 30);
+  ctx.strokeRect(igX - 60, igY - 30, 60, igH + 30);
+  ctx.fillRect(igX + igW, igY - 30, 60, igH + 30);
+  ctx.strokeRect(igX + igW, igY - 30, 60, igH + 30);
+  ctx.fillStyle = P.contorno;
+  ctx.fillRect(igX - 35, igY - 60, 4, 30);
+  ctx.fillRect(igX - 45, igY - 50, 24, 4);
+  ctx.fillRect(igX + igW + 30, igY - 60, 4, 30);
+  ctx.fillRect(igX + igW + 20, igY - 50, 24, 4);
+  ctx.beginPath();
+  ctx.arc(igX + igW/2, igY - 10, igW*0.2, Math.PI, 0);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(26,18,8,0.8)';
+  ctx.beginPath();
+  ctx.arc(igX + igW/2, igY + igH - 40, 30, Math.PI, 0);
+  ctx.rect(igX + igW/2 - 30, igY + igH - 40, 60, 40);
+  ctx.fill();
+  ctx.fillStyle = P.igrejaSombra;
+  for (let i = 0; i < 5; i++){
+    ctx.fillRect(igX - 20 - i*15, H*0.85 + i*10, igW + 40 + i*30, 10);
+    ctx.strokeRect(igX - 20 - i*15, H*0.85 + i*10, igW + 40 + i*30, 10);
+  }
+  for (let i = 0; i < 12; i++){
+    ctx.fillStyle = ['#f2c94c','#c93232','#2a5a9a','#3a7a3a','#e8a870'][i % 5];
+    const fx = igX + igW*0.4 + (i%6)*20;
+    const fy = igY + igH - 20 + Math.floor(i/6)*15;
+    ctx.fillRect(fx, fy, 3, 25);
+  }
+}
+
+function desenhaMercado(){
+  desenhaCeu(['#7DA4F1', '#a8c4e8', '#f0e8d8']);
+  ctx.fillStyle = P.mar;
+  ctx.fillRect(0, H*0.5, W, H*0.15);
+  for (let i = 0; i < 3; i++){
+    const sx = 100 + i*300, sy = H*0.55;
+    ctx.fillStyle = '#3a2a1a';
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(sx + 60, sy);
+    ctx.lineTo(sx + 50, sy + 15);
+    ctx.lineTo(sx + 10, sy + 15);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = P.igreja;
+    ctx.beginPath();
+    ctx.moveTo(sx + 30, sy);
+    ctx.lineTo(sx + 30, sy - 40);
+    ctx.lineTo(sx + 55, sy - 5);
+    ctx.closePath(); ctx.fill();
+  }
+  const mx = W*0.25, my = H*0.4, mw = W*0.5, mh = H*0.5;
+  ctx.fillStyle = P.igreja;
+  ctx.fillRect(mx, my, mw, mh);
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+  ctx.strokeRect(mx, my, mw, mh);
+  ctx.fillStyle = P.igrejaSombra;
+  ctx.beginPath();
+  ctx.arc(mx + mw/2, my, mw*0.3, Math.PI, 0);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(26,18,8,0.7)';
+  for (let i = 0; i < 4; i++){
+    ctx.beginPath();
+    ctx.arc(mx + mw*0.15 + i*mw*0.22, my + mh*0.7, 25, Math.PI, 0);
+    ctx.rect(mx + mw*0.15 + i*mw*0.22 - 25, my + mh*0.7, 50, mh*0.3);
+    ctx.fill();
+  }
+  for (let i = 0; i < 5; i++){
+    ctx.fillStyle = ['#e8a870','#c93232','#3a7a3a'][i % 3];
+    ctx.fillRect(W*0.8 + i*30, H*0.75, 28, H*0.15);
+  }
+}
+
+function desenhaTerreiro(){
+  desenhaCeu(['#c98a5a', '#e8a870', '#f2c94c']);
+  const baseY = H*0.55;
+  for (let i = 0; i < 8; i++){
+    const cor = [P.casarao, P.casarao2, P.casarao3, P.casarao5][i % 4];
+    ctx.fillStyle = cor;
+    ctx.fillRect(i*130, baseY - i*10, 120, H*0.45);
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    ctx.strokeRect(i*130, baseY - i*10, 120, H*0.45);
+    ctx.fillStyle = 'rgba(26,18,8,0.6)';
+    for (let j = 0; j < 3; j++){
+      for (let k = 0; k < 2; k++){
+        ctx.fillRect(i*130 + 20 + j*30, baseY - i*10 + 40 + k*50, 18, 30);
+      }
+    }
+  }
+  ctx.fillStyle = P.igreja;
+  ctx.fillRect(W*0.4, H*0.15, 100, H*0.5);
+  ctx.strokeRect(W*0.4, H*0.15, 100, H*0.5);
+  ctx.fillStyle = P.contorno;
+  ctx.fillRect(W*0.45, H*0.08, 4, 30);
+  ctx.fillRect(W*0.43, H*0.13, 24, 4);
+  ctx.fillStyle = P.pedra;
+  ctx.fillRect(0, H*0.9, W, H*0.1);
+}
+
+function desenhaFarol(){
+  desenhaCeu(['#c93232', '#e8a870', '#f2c94c']);
+  desenhaSol(W*0.5, H*0.5, 80, '#f2e8a0');
+  ctx.fillStyle = P.marEscuro;
+  ctx.fillRect(0, H*0.6, W, H*0.25);
+  ctx.fillStyle = 'rgba(242,201,76,0.4)';
+  for (let i = 0; i < 8; i++){
+    ctx.fillRect(W*0.45 + (i%3)*10, H*0.62 + i*10, 60 - i*5, 3);
+  }
+  const fx = W*0.2, fy = H*0.25;
+  ctx.fillStyle = P.igreja;
+  ctx.fillRect(fx, fy, 60, H*0.5);
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+  ctx.strokeRect(fx, fy, 60, H*0.5);
+  ctx.fillStyle = P.casarao3;
+  for (let i = 0; i < 3; i++){
+    ctx.fillRect(fx, fy + 60 + i*60, 60, 20);
+  }
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(fx - 5, fy - 20, 70, 20);
+  ctx.fillStyle = P.lampiao;
+  ctx.beginPath();
+  ctx.arc(fx + 30, fy - 10, 12, 0, Math.PI*2);
+  ctx.fill();
+  ctx.save();
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = P.lampiao;
+  ctx.beginPath();
+  ctx.moveTo(fx + 30, fy - 10);
+  ctx.lineTo(W, fy - 80);
+  ctx.lineTo(W, fy + 20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = P.igrejaSombra;
+  ctx.fillRect(W*0.55, H*0.6, 200, H*0.3);
+  ctx.strokeRect(W*0.55, H*0.6, 200, H*0.3);
+}
+
+function desenhaForte(){
+  desenhaCeu(['#0a0e2a', '#1a1a3a', '#2a2a4a']);
+  ctx.fillStyle = P.marEscuro;
+  ctx.fillRect(0, H*0.55, W, H*0.45);
+  ctx.fillStyle = 'rgba(242,201,76,0.15)';
+  for (let i = 0; i < 6; i++){
+    ctx.fillRect(200 + i*80, H*0.7, 60, 2);
+  }
+  for (let i = 0; i < 40; i++){
+    const x = (i * 137) % W;
+    const y = H*0.5 - (i % 5) * 15;
+    ctx.fillStyle = `rgba(242,201,76,${0.3 + (i%3)*0.2})`;
+    ctx.fillRect(x, y, 3, 3);
+  }
+  const fx = W*0.5, fy = H*0.6;
+  ctx.fillStyle = P.igrejaSombra;
+  ctx.beginPath();
+  ctx.ellipse(fx, fy, 120, 80, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+  ctx.stroke();
+  for (let i = 0; i < 12; i++){
+    const ang = (i/12) * Math.PI * 2;
+    const ax = fx + Math.cos(ang)*120;
+    const ay = fy + Math.sin(ang)*80;
+    ctx.fillRect(ax - 5, ay - 5, 10, 10);
+  }
+  ctx.fillStyle = P.lampiao;
+  ctx.beginPath();
+  ctx.arc(fx, fy - 20, 8, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#e8e8d8';
+  ctx.beginPath();
+  ctx.arc(W*0.85, H*0.2, 30, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function desenhaDique(){
+  desenhaCeu(['#c98a5a', '#e8a870', '#f2c94c']);
+  ctx.fillStyle = P.marEscuro;
+  ctx.fillRect(0, H*0.55, W, H*0.45);
+  for (let i = 0; i < 10; i++){
+    ctx.fillStyle = `rgba(242,201,76,${0.05 + (i%3)*0.05})`;
+    ctx.fillRect(i*100, H*0.6 + (i%4)*20, 80, 3);
+  }
+  const orixas = [
+    {x: W*0.25, h: 120, cor: '#1a1a2a'},
+    {x: W*0.45, h: 140, cor: '#2a1a2a'},
+    {x: W*0.65, h: 110, cor: '#1a2a2a'},
+    {x: W*0.85, h: 130, cor: '#2a2a1a'},
+  ];
+  orixas.forEach(o => {
+    ctx.fillStyle = o.cor;
+    ctx.beginPath();
+    ctx.ellipse(o.x, H*0.7 - o.h/2, 30, o.h/2, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(o.x, H*0.7 - o.h, 20, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.fillStyle = 'rgba(26,18,8,0.5)';
+  for (let i = 0; i < 12; i++){
+    ctx.fillRect(i*80, H*0.45 - (i%3)*20, 70, H*0.1 + (i%3)*20);
+  }
+}
+
+/* ============================================================
+   CENÁRIO: MUDANÇA DO GARCIA
+   ============================================================ */
+function desenhaGarcia(){
+  desenhaCeu(['#c93232', '#e8a870', '#f2c94c', '#e8d8b0']);
+  desenhaSol(W*0.7, H*0.4, 60, '#f2e8a0');
+
+  const baseY = H*0.5;
+  for (let i = 0; i < 8; i++){
+    const cor = [P.casarao, P.casarao2, P.casarao3, P.casarao5][i % 4];
+    const cx = i * (W/8);
+    const cw = W/8 + 2;
+    const alt = H*0.28 + (i%3)*20;
+    ctx.fillStyle = cor;
+    ctx.fillRect(cx, baseY - alt, cw, alt);
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+    ctx.strokeRect(cx, baseY - alt, cw, alt);
+    ctx.fillStyle = P.telhado;
+    ctx.fillRect(cx - 3, baseY - alt - 6, cw + 6, 8);
+    ctx.fillStyle = 'rgba(26,18,8,0.65)';
+    for (let wy = baseY - alt + 20; wy < baseY - 20; wy += 35){
+      for (let wx = cx + 12; wx < cx + cw - 20; wx += 24){
+        ctx.fillRect(wx, wy, 10, 15);
+      }
+    }
+  }
+
+  for (let i = 0; i < 4; i++){
+    const px = 100 + i * 250;
+    desenhaPalmeira(px, H*0.55, 1);
+  }
+
+  ctx.fillStyle = P.pedra;
+  ctx.fillRect(0, H*0.55, W, H*0.45);
+  for (let x = 0; x < W; x += 20){
+    for (let y = H*0.55; y < H; y += 14){
+      const off = ((x/20) + (y/14)) % 2;
+      ctx.fillStyle = off ? '#1a0e08' : '#2a1810';
+      ctx.fillRect(x, y, 18, 12);
+    }
+  }
+
+  for (let i = 0; i < 30; i++){
+    const cx = (i * 137 + tCena * 0.05) % W;
+    const cy = (i * 89 + Math.sin(tCena * 0.001 + i) * 30) % (H*0.55);
+    const cores = ['#f2c94c', '#c93232', '#3a7a3a', '#2a5a9a', '#e8a870'];
+    ctx.fillStyle = cores[i % 5];
+    ctx.fillRect(cx, cy, 4, 4);
+  }
+}
+
+function desenhaPalmeira(x, y, escala){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(escala, escala);
+  ctx.strokeStyle = '#5a3a1a';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -80);
+  ctx.stroke();
+  ctx.strokeStyle = P.palmeira;
+  ctx.lineWidth = 5;
+  for (let i = 0; i < 7; i++){
+    ctx.save();
+    ctx.translate(0, -80);
+    ctx.rotate(-Math.PI/2 + (i - 3) * 0.4);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(30, -10, 60, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/* ============================================================
+   PERSONAGENS
+   ============================================================ */
+function drawNinguem(cx, cy, escala, t, andando){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+
+  const resp = andando ? Math.sin(t * 0.008) * 3 : Math.sin(t * 0.0015) * 2;
+  const perna = andando ? Math.sin(t * 0.008) * 5 : 0;
+
+  ctx.fillStyle = P.ning_jeans;
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.fillRect(-16, 30, 14, 48 + perna);
+  ctx.strokeRect(-16, 30, 14, 48 + perna);
+  ctx.fillRect(2, 30, 14, 48 - perna);
+  ctx.strokeRect(2, 30, 14, 48 - perna);
+
+  ctx.fillStyle = P.ning_tenis;
+  ctx.fillRect(-18, 76, 18, 8);
+  ctx.fillRect(0, 76, 18, 8);
+
+  ctx.fillStyle = P.ning_camisa;
+  ctx.fillRect(-20, -25 + resp, 40, 58);
+  ctx.strokeRect(-20, -25 + resp, 40, 58);
+  ctx.fillStyle = P.ning_camisaDark;
+  ctx.fillRect(-20, -25 + resp, 4, 58);
+  ctx.fillRect(16, -25 + resp, 4, 58);
+
+  ctx.fillStyle = P.ning_camisa;
+  ctx.fillRect(-26, -20 + resp, 8, 30);
+  ctx.fillRect(18, -20 + resp, 8, 30);
+  ctx.fillStyle = P.ning_luva;
+  ctx.fillRect(-26, 8 + resp, 8, 14);
+  ctx.fillRect(18, 8 + resp, 8, 14);
+
+  ctx.fillStyle = P.ning_pele;
+  ctx.fillRect(-6, -32 + resp, 12, 8);
+  ctx.fillStyle = P.ning_mascara;
+  ctx.beginPath();
+  ctx.ellipse(0, -48 + resp, 18, 20, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = P.contorno;
+  ctx.font = 'bold 24px ui-serif,Georgia,serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('?', 0, -48 + resp);
+  ctx.restore();
+}
+
+function drawLuaNegra(cx, cy, escala, t){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+  const perna = Math.sin(t * 0.008) * 3;
+  ctx.fillStyle = P.lua_calca;
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.fillRect(-15, 28, 13, 50 + perna);
+  ctx.fillRect(2, 28, 13, 50 - perna);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-17, 74, 16, 10);
+  ctx.fillRect(1, 74, 16, 10);
+  ctx.fillStyle = P.lua_top;
+  ctx.fillRect(-16, -20, 32, 48);
+  ctx.strokeRect(-16, -20, 32, 48);
+  ctx.fillStyle = P.lua_pele;
+  ctx.fillRect(-14, 18, 28, 12);
+  ctx.fillRect(-22, -15, 7, 26);
+  ctx.fillRect(15, -15, 7, 26);
+  ctx.fillStyle = P.lua_pele;
+  ctx.beginPath();
+  ctx.ellipse(0, -42, 15, 18, 0, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#0a0a0a';
+  ctx.beginPath();
+  ctx.arc(0, -50, 16, Math.PI, 0);
+  ctx.fill();
+  ctx.fillStyle = P.lua_olho;
+  ctx.shadowColor = P.lua_olho; ctx.shadowBlur = 15;
+  ctx.beginPath();
+  ctx.ellipse(-5, -42, 3, 3.5, 0, 0, Math.PI*2);
+  ctx.ellipse(5, -42, 3, 3.5, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function drawMenino(cx, cy, escala, t){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+  const perna = Math.sin(t * 0.008) * 3;
+  ctx.fillStyle = P.men_pele;
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.fillRect(-12, 22, 10, 32 + perna);
+  ctx.fillRect(2, 22, 10, 32 - perna);
+  ctx.fillStyle = P.men_bermuda;
+  ctx.fillRect(-14, 12, 28, 14);
+  ctx.fillStyle = P.men_camisa;
+  ctx.fillRect(-13, -14, 26, 28);
+  ctx.fillStyle = P.branco;
+  ctx.font = 'bold 16px ui-sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('!', 0, 6);
+  ctx.fillStyle = P.men_pele;
+  ctx.fillRect(-18, -10, 6, 22);
+  ctx.fillRect(12, -10, 6, 22);
+  ctx.fillStyle = '#1a1a22';
+  ctx.fillRect(14, 4, 14, 10);
+  ctx.fillStyle = '#4a4a5a';
+  ctx.beginPath();
+  ctx.arc(15, 9, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#c93232';
+  ctx.beginPath();
+  ctx.arc(24, 6, 1.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = P.men_pele;
+  ctx.beginPath();
+  ctx.ellipse(0, -34, 13, 15, 0, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = P.men_bone;
+  ctx.beginPath();
+  ctx.arc(0, -42, 14, Math.PI, 0);
+  ctx.fill();
+  ctx.fillRect(2, -44, 18, 5);
+  ctx.fillStyle = P.contorno;
+  ctx.beginPath();
+  ctx.arc(-4, -36, 1.5, 0, Math.PI*2);
+  ctx.arc(4, -36, 1.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawCarcara(cx, cy, escala){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+  ctx.fillStyle = P.car_couro;
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.fillRect(-15, 32, 13, 40);
+  ctx.fillRect(2, 32, 13, 40);
+  ctx.fillStyle = P.car_armadura;
+  ctx.fillRect(-18, -20, 36, 52);
+  ctx.strokeRect(-18, -20, 36, 52);
+  ctx.fillStyle = P.car_couro;
+  ctx.fillRect(-22, -20, 6, 20);
+  ctx.fillRect(16, -20, 6, 20);
+  ctx.fillStyle = P.car_capacete;
+  ctx.beginPath();
+  ctx.ellipse(0, -38, 17, 20, 0, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = P.car_mascara;
+  ctx.beginPath();
+  ctx.ellipse(0, -28, 10, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#0a0a0a';
+  ctx.beginPath();
+  ctx.arc(-6, -42, 4, 0, Math.PI*2);
+  ctx.arc(6, -42, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawNinjaGago(cx, cy, escala, t){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+  ctx.save();
+  ctx.rotate(-0.6);
+  ctx.fillStyle = P.ninja_katana;
+  ctx.fillRect(-3, -110, 6, 130);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-5, 20, 10, 20);
+  ctx.restore();
+  ctx.fillStyle = P.ninja_azul;
+  ctx.fillRect(-22, -20, 44, 60);
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.strokeRect(-22, -20, 44, 60);
+  ctx.fillStyle = P.ninja_faixa;
+  ctx.fillRect(-22, 10, 44, 6);
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(-16, 40, 12, 40);
+  ctx.fillRect(4, 40, 12, 40);
+  ctx.fillRect(-18, 78, 16, 6);
+  ctx.fillRect(2, 78, 16, 6);
+  ctx.fillStyle = P.ninja_azul;
+  ctx.fillRect(-28, -10, 8, 30);
+  ctx.fillRect(20, -10, 8, 30);
+  ctx.beginPath();
+  ctx.arc(0, -40, 20, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.ellipse(-7, -42, 4, 3, 0, 0, Math.PI*2);
+  ctx.ellipse(7, -42, 4, 3, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(-7, -42, 1.5, 0, Math.PI*2);
+  ctx.arc(7, -42, 1.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 4; i++){
+    ctx.beginPath();
+    ctx.moveTo(-25, -10 + i*15);
+    ctx.lineTo(25, -10 + i*15);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPavao(cx, cy, escala){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+
+  // leque de penas
+  for (let i = -8; i <= 8; i++){
+    ctx.save();
+    ctx.rotate(i * 0.13);
+    ctx.fillStyle = P.pav_pena1;
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(0, -60, 5, 45, 0, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = P.pav_penaOlho;
+    ctx.beginPath();
+    ctx.ellipse(0, -90, 4, 7, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = P.pav_penaMiolo;
+    ctx.beginPath();
+    ctx.arc(0, -90, 2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // corpo
+  ctx.fillStyle = P.pav_azul;
+  ctx.fillRect(-18, -20, 36, 55);
+  ctx.strokeStyle = P.contorno; ctx.lineWidth = 1.5;
+  ctx.strokeRect(-18, -20, 36, 55);
+
+  // braços abertos (maestro)
+  ctx.fillStyle = P.pav_azul;
+  ctx.save();
+  ctx.translate(-18, -10);
+  ctx.rotate(0.4);
+  ctx.fillRect(-30, 0, 30, 12);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(18, -10);
+  ctx.rotate(-0.4);
+  ctx.fillRect(0, 0, 30, 12);
+  ctx.restore();
+
+  // pernas
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-10, 35, 8, 40);
+  ctx.fillRect(2, 35, 8, 40);
+
+  // cabeça
+  ctx.fillStyle = '#e0b88a';
+  ctx.beginPath();
+  ctx.ellipse(0, -34, 13, 15, 0, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+
+  // máscara azul
+  ctx.fillStyle = P.pav_azul;
+  ctx.beginPath();
+  ctx.ellipse(0, -38, 14, 11, 0, Math.PI, 0);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-7, -34);
+  ctx.lineTo(7, -34);
+  ctx.lineTo(0, -29);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+/* ============================================================
+   ROBÔ — NARCISO DA BIRRA
+   ============================================================ */
+function desenhaRobo(prog){
+  const cx = W * 0.55;
+  const chao = H * 0.92;
+
+  ctx.save();
+  ctx.translate(cx, chao);
+
+  // RODAS (base — aparecem logo)
+  if (prog > 0){
+    ctx.fillStyle = '#1a1a1a';
+    [-80, -30, 30, 80].forEach(rx => {
+      ctx.beginPath();
+      ctx.arc(rx, -15, 18, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.strokeStyle = '#3a3a3a'; ctx.lineWidth = 1.5;
+      for (let a = 0; a < 8; a++){
+        ctx.beginPath();
+        ctx.moveTo(rx, -15);
+        ctx.lineTo(rx + Math.cos(a * Math.PI/4) * 14, -15 + Math.sin(a * Math.PI/4) * 14);
+        ctx.stroke();
+      }
+    });
+  }
+
+  // PERNAS
+  if (prog > 0.12){
+    const p = Math.min(1, (prog - 0.12) / 0.18);
+    ctx.fillStyle = P.roboBase;
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    [-50, 50].forEach(lx => {
+      const h = 60 * p;
+      ctx.fillRect(lx - 18, -15 - h, 36, h);
+      ctx.strokeRect(lx - 18, -15 - h, 36, h);
+      ctx.fillStyle = P.roboPainel;
+      ctx.fillRect(lx - 10, -15 - h + 10, 20, 8);
+      ctx.fillStyle = P.roboBase;
+    });
+  }
+
+  // TORSO (caixa de som)
+  if (prog > 0.3){
+    const p = Math.min(1, (prog - 0.3) / 0.2);
+    const torY = -75;
+    const torH = 90 * p;
+    ctx.fillStyle = P.roboTorso;
+    ctx.fillRect(-90, torY - torH, 180, torH);
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    ctx.strokeRect(-90, torY - torH, 180, torH);
+
+    // painel do trio elétrico
+    if (p > 0.4){
+      ctx.fillStyle = P.roboPainel;
+      ctx.fillRect(-70, torY - torH + 15, 140, 40);
+      ctx.fillStyle = '#c93232';
+      ctx.font = 'bold 14px ui-sans-serif,system-ui,sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('NARCISO DA BIRRA', 0, torY - torH + 30);
+      ctx.font = 'bold 10px ui-sans-serif,system-ui,sans-serif';
+      ctx.fillStyle = '#2a5a9a';
+      ctx.fillText('TRIO TRANSFORMAR', 0, torY - torH + 46);
+    }
+
+    // falantes
+    for (let i = 0; i < 3; i++){
+      ctx.fillStyle = '#0a0a0a';
+      ctx.beginPath();
+      ctx.arc(-60 + i*60, torY - torH + 70, 14, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // luzes LED nas laterais
+    if (prog > 0.55){
+      for (let i = 0; i < 8; i++){
+        const cor = ['#f2c94c', '#c93232', '#2a8ac9', '#3a7a3a'][i % 4];
+        ctx.fillStyle = cor;
+        ctx.fillRect(-92, torY - torH + 10 + i*10, 4, 6);
+        ctx.fillRect(88, torY - torH + 10 + i*10, 4, 6);
+      }
+    }
+  }
+
+  // BRAÇOS
+  if (prog > 0.5){
+    const p = Math.min(1, (prog - 0.5) / 0.2);
+    ctx.fillStyle = P.roboBase;
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    ctx.fillRect(-140, -130, 30, 70 * p);
+    ctx.strokeRect(-140, -130, 30, 70 * p);
+    ctx.fillRect(110, -130, 30, 70 * p);
+    ctx.strokeRect(110, -130, 30, 70 * p);
+
+    if (p > 0.7){
+      ctx.fillStyle = '#2a3a4a';
+      [-125, 125].forEach(hx => {
+        for (let i = 0; i < 4; i++){
+          ctx.fillRect(hx - 15 + i*10, -130 + 70*p, 8, 15);
+        }
+      });
+    }
+  }
+
+  // CABEÇA
+  if (prog > 0.7){
+    const p = Math.min(1, (prog - 0.7) / 0.15);
+    const cabY = -180;
+    ctx.fillStyle = P.roboBase;
+    ctx.beginPath();
+    ctx.ellipse(0, cabY, 45 * p, 50 * p, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = P.contorno; ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // olhos vermelhos
+    if (p > 0.6){
+      ctx.fillStyle = P.roboOlho;
+      ctx.shadowColor = P.roboOlho;
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.arc(-15, cabY - 5, 6, 0, Math.PI*2);
+      ctx.arc(15, cabY - 5, 6, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // antena
+    if (p > 0.8){
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, cabY - 50);
+      ctx.lineTo(0, cabY - 90);
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
+
+  // PAVÃO no topo
+  if (prog > 0.85){
+    const pp = Math.min(1, (prog - 0.85) / 0.15);
+    drawPavao(cx, H*0.30, 1.8 * pp);
+  }
+}
+
+/* ============================================================
+   ELENCO OLHANDO
+   ============================================================ */
+function desenhaElencoOlhando(){
+  const baseY = H * 0.92;
+  const escala = 1.3;
+
+  // Ninguém
+  ctx.save();
+  ctx.translate(W*0.12, baseY);
+  ctx.scale(escala, escala);
+  drawNinguem(0, 0, 1, tCena, false);
+  ctx.restore();
+
+  // Lua Negra
+  ctx.save();
+  ctx.translate(W*0.28, baseY);
+  ctx.scale(escala, escala);
+  drawLuaNegra(0, 0, 1, tCena);
+  ctx.restore();
+
+  // Menino
+  ctx.save();
+  ctx.translate(W*0.44, baseY + 10);
+  ctx.scale(escala, escala);
+  drawMenino(0, 0, 1, tCena);
+  ctx.restore();
+
+  // Carcará
+  ctx.save();
+  ctx.translate(W*0.6, baseY);
+  ctx.scale(escala, escala);
+  drawCarcara(0, 0, 1);
+  ctx.restore();
+
+  // Ninja Gago
+  ctx.save();
+  ctx.translate(W*0.78, baseY);
+  ctx.scale(escala, escala);
+  drawNinjaGago(0, 0, 1, tCena);
+  ctx.restore();
+}
+
+/* ============================================================
+   MULTIDÃO
+   ============================================================ */
+let multidao = [];
+function iniciarMultidao(qtd, carnaval){
+  multidao = [];
+  for (let i = 0; i < qtd; i++){
+    multidao.push({
+      x: Math.random() * W,
+      y: H * (0.72 + Math.random() * 0.2),
+      v: 0.2 + Math.random() * 0.5,
+      e: 0.5 + Math.random() * 0.4,
+      cor: [P.povo1, P.povo2, P.povo3][i % 3],
+      dir: Math.random() > 0.5 ? 1 : -1,
+      bob: Math.random() * Math.PI * 2,
+      carnaval: carnaval,
+    });
+  }
+}
+function desenhaMultidao(){
+  multidao.forEach(p => {
+    p.x += p.v * p.dir;
+    if (p.x < -50) p.x = W + 50;
+    if (p.x > W + 50) p.x = -50;
+    const bob = Math.sin(tCena * 0.005 + p.bob) * 2;
+
+    ctx.fillStyle = p.cor;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y - 22*p.e + bob, 4*p.e, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillRect(p.x - 4*p.e, p.y - 18*p.e + bob, 8*p.e, 16*p.e);
+    ctx.fillRect(p.x - 3*p.e, p.y - 2*p.e, 2*p.e, 6*p.e);
+    ctx.fillRect(p.x + 1*p.e, p.y - 2*p.e, 2*p.e, 6*p.e);
+
+    // braços levantados (Carnaval)
+    if (p.carnaval){
+      ctx.fillRect(p.x - 6*p.e, p.y - 20*p.e + bob, 2*p.e, 10*p.e);
+      ctx.fillRect(p.x + 4*p.e, p.y - 20*p.e + bob, 2*p.e, 10*p.e);
+    } else {
+      ctx.fillRect(p.x - 6*p.e, p.y - 14*p.e + bob, 2*p.e, 10*p.e);
+      ctx.fillRect(p.x + 4*p.e, p.y - 14*p.e + bob, 2*p.e, 10*p.e);
+    }
+  });
+}
+
+/* ============================================================
+   GRÃO
+   ============================================================ */
+let graoBuffer = null;
+function drawGrao(intensidade=0.08){
+  if (!graoBuffer || graoBuffer.width !== W){
+    graoBuffer = document.createElement('canvas');
+    graoBuffer.width = W; graoBuffer.height = H;
+  }
+  const gCtx = graoBuffer.getContext('2d');
+  const img = gCtx.createImageData(W, H);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 24){
+    if (Math.random() < 0.4){
+      const v = Math.random() * 255;
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+  }
+  gCtx.putImageData(img, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = intensidade;
+  ctx.globalCompositeOperation = 'overlay';
+  ctx.drawImage(graoBuffer, 0, 0);
+  ctx.restore();
+}
+
+/* ============================================================
+   CENAS VISUAIS
+   ============================================================ */
+let tGlobal = 0, tCena = 0;
+let multiIniciada = false;
+let multiCarnaval = false;
+
+function cena_pelourinhoVazio(){
+  desenhaPelourinho();
+  const x = -100 + (tCena / 8000) * (W + 200);
+  drawNinguem(x, H*0.75, 2, tCena, true);
+  drawGrao(0.08);
+}
+function cena_pelourinhoPovo(){
+  desenhaPelourinho();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(15, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  const x = -100 + (tCena / 9000) * (W + 200);
+  drawNinguem(x, H*0.78, 2, tCena, true);
+  drawGrao(0.08);
+}
+function cena_bonfim(){
+  desenhaBonfim();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(12, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  const lx = -80 + (tCena / 10000) * (W*0.6);
+  const rx = W + 80 - (tCena / 10000) * (W*0.6);
+  drawLuaNegra(lx, H*0.8, 2, tCena);
+  drawCarcara(rx, H*0.8, 2);
+  drawGrao(0.08);
+}
+function cena_mercado(){
+  desenhaMercado();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(18, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  const x = -100 + (tCena / 9000) * (W + 200);
+  drawNinguem(x, H*0.8, 2, tCena, true);
+  drawCarcara(x + 100, H*0.8, 2);
+  drawGrao(0.08);
+}
+function cena_terreiro(){
+  desenhaTerreiro();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(12, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  const x = -100 + (tCena / 7000) * (W + 200);
+  drawMenino(x, H*0.8, 1.9, tCena);
+  drawNinguem(x - 100, H*0.8, 2, tCena, true);
+  drawGrao(0.08);
+}
+function cena_farol(){
+  desenhaFarol();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(20, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  const baseX = -200 + (tCena / 12000) * (W + 400);
+  const yBase = H*0.82;
+  drawNinguem(baseX, yBase, 1.8, tCena, true);
+  drawLuaNegra(baseX + 130, yBase, 1.8, tCena);
+  drawMenino(baseX + 260, yBase + 10, 1.7, tCena);
+  drawCarcara(baseX + 380, yBase, 1.8);
+  drawGrao(0.1);
+}
+function cena_forte(){
+  desenhaForte();
+  drawUrubuFake(W/2, H*0.75, 1.8);
+  drawGrao(0.08);
+}
+function cena_dique(){
+  desenhaDique();
+  if (!multiIniciada || multiCarnaval){ iniciarMultidao(15, false); multiIniciada = true; multiCarnaval = false; }
+  desenhaMultidao();
+  ctx.save();
+  ctx.globalAlpha = 0.85;
+  ctx.fillStyle = P.ning_mascara;
+  ctx.beginPath();
+  ctx.arc(W/2, H*0.35, H*0.25, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = P.contorno;
+  ctx.font = 'bold ' + Math.floor(H*0.3) + 'px ui-serif,Georgia,serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('?', W/2, H*0.35 + 15);
+  ctx.restore();
+  drawGrao(0.15);
+}
+
+function drawUrubuFake(cx, cy, escala){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(escala, escala);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 35, 55, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#a8a09a';
+  ctx.beginPath();
+  ctx.arc(-15, -40, 22, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(-22, -44, 5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(-23, -44, 2.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#8a5a2a';
+  ctx.beginPath();
+  ctx.moveTo(-35, -40); ctx.lineTo(-55, -32); ctx.lineTo(-35, -30); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(20, 40); ctx.lineTo(20, -20); ctx.stroke();
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.ellipse(20, -25, 6, 10, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function cena_garciaMontagem(){
+  desenhaGarcia();
+  if (!multiIniciada || !multiCarnaval){ iniciarMultidao(40, true); multiIniciada = true; multiCarnaval = true; }
+  desenhaMultidao();
+  const prog = Math.min(1, tCena / 14000);
+  desenhaRobo(prog);
+  drawGrao(0.1);
+}
+
+function cena_garciaClimax(){
+  desenhaGarcia();
+  if (!multiIniciada || !multiCarnaval){ iniciarMultidao(50, true); multiIniciada = true; multiCarnaval = true; }
+  desenhaMultidao();
+  desenhaRobo(1);
+  desenhaElencoOlhando();
+
+  if (tCena > 16000){
+    const p = Math.min(1, (tCena - 16000) / 4000);
+    ctx.fillStyle = `rgba(0,0,0,${p})`;
+    ctx.fillRect(0, 0, W, H);
+    if (p > 0.6){
+      ctx.save();
+      ctx.globalAlpha = (p - 0.6) / 0.4;
+      ctx.fillStyle = P.ning_camisa;
+      ctx.font = 'bold 52px ui-serif,Georgia,serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('CARNAVAL 2027', W/2, H/2 - 30);
+      ctx.fillStyle = P.branco;
+      ctx.font = 'italic 22px ui-serif,Georgia,serif';
+      ctx.fillText('Mudança do Garcia · Soterópolis', W/2, H/2 + 30);
+      ctx.restore();
+    }
+  }
+  drawGrao(0.12);
+}
+
+const CENAS_VISUAIS = {
+  'pelourinho-vazio': cena_pelourinhoVazio,
+  'pelourinho-povo': cena_pelourinhoPovo,
+  'bonfim': cena_bonfim,
+  'mercado': cena_mercado,
+  'terreiro': cena_terreiro,
+  'farol': cena_farol,
+  'forte': cena_forte,
+  'dique': cena_dique,
+  'garcia-montagem': cena_garciaMontagem,
+  'garcia-climax': cena_garciaClimax,
+};
+
+/* ============================================================
+   SCHEDULER
+   ============================================================ */
+function scheduleSection(idx){
+  if (idx >= SECTIONS.length){
+    loopCount++;
+    idx = 0;
+  }
+  const sec = SECTIONS[idx];
+  currentSection = idx;
+  cenaAtual = idx;
+  tCena = 0;
+  multiIniciada = false;
+  $('indVal').textContent = sec.name;
+  $('indicador').classList.toggle('on',
+    sec.name === 'NINGUÉM' || sec.name === 'tutti' || sec.name === 'CARNAVAL');
+
+  const barDur = (60 / bpm()) * 3;
+  const secDuration = sec.bars * barDur;
+  const secStart = actx.currentTime + 0.08;
+
+  for (let b = 0; b < sec.bars; b++){
+    t0 = secStart + b * barDur;
+    bar = b;
+    try { sec.fn(b); } catch(e){ console.warn('sec err', sec.name, e); }
+  }
+
+  schedTimer = setTimeout(() => scheduleSection(idx + 1),
+    secDuration * 1000 - 30);
+}
+
+/* ============================================================
+   LOOP VISUAL
+   ============================================================ */
+let last = performance.now();
+let accFrame = 0;
+const FPS = 8;
+const FRAME_MS = 1000 / FPS;
+
+function loop(now){
+  const dt = now - last;
+  last = now;
+  tGlobal += dt;
+  tCena += dt;
+  accFrame += dt;
+
+  if (accFrame >= FRAME_MS){
+    accFrame = 0;
+    const sec = SECTIONS[cenaAtual];
+    if (sec && CENAS_VISUAIS[sec.cena]) CENAS_VISUAIS[sec.cena]();
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ============================================================
+   CONTROLES
+   ============================================================ */
+let somLigado = false;
+
+function play(){
+  if (playing) return;
+  initAudio();
+  actx.resume();
+  playing = true;
+  startedAt = performance.now();
+  loopCount = 0;
+  $('play').classList.add('hidden');
+  scheduleSection(0);
+}
+
+$('play').addEventListener('click', ()=>{
+  somLigado = true;
+  $('som').classList.add('on');
+  $('som').textContent = '🔊 som';
+  play();
+});
+
+$('som').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  somLigado = !somLigado;
+  $('som').textContent = somLigado ? '🔊 som' : '🔇 som';
+  $('som').classList.toggle('on', somLigado);
+  if (master) master.gain.value = somLigado ? 0.65 : 0;
+});
+</script>
+</body>
+</html>
